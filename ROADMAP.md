@@ -40,8 +40,13 @@
 
 ---
 
-## Phase 2 — Toolchain Expansion (Completed)
+## Phase 2 — Toolchain & Dependency Expansion (Completed)
 
+- [x] **Non-Admin Gpg4win & GnuPG Foundation Installer (`Gpg4win-Installer/`):**
+  - [x] Automated discovery and download of official Gpg4win installer and detached signature.
+  - [x] Cryptographic SHA-256 verification and Authenticode inspection.
+  - [x] Silent non-elevated installation into `$HOME\.local\gpg4win` via `RunAsInvoker`.
+  - [x] Persistent User PATH update adding GnuPG (`gpg.exe`) and Gpg4win (`kleopatra.exe`).
 - [x] **Non-Admin Go Toolchain Installer (`Go-Installer/`):**
   - [x] Automated discovery and download of official `go*.windows-amd64.zip` from `https://go.dev/dl/?mode=json`.
   - [x] Cryptographic SHA-256 verification against official manifest hash.
@@ -64,9 +69,9 @@
   - [x] Full interactive console menu when run bare.
   - [x] Detailed `-Help` manual with synopsis, flag definitions, and real-world examples.
   - [x] Toolchain inventory inspection via `-List`.
-  - [x] Single-command batch installation with `-All` or selective flags (`-MSYS2`, `-Rust`, `-Go`, `-Node`, `-Python`).
-  - [x] Executive summary reporting with per-toolchain duration and status badges.
-**Exit:** Multi-language developer suite operable entirely from user space.
+  - [x] Single-command batch installation with `-All` or selective flags.
+  - [x] Automatic dependency checking (GnuPG prerequisite for MSYS2/Rust).
+**Exit:** Multi-language developer suite and foundational cryptographic tools operable entirely from user space.
 
 ---
 
@@ -105,10 +110,9 @@
 ## Phase 3 — Lifecycle Management & CI Automation (Future)
 
 - [ ] **Dedicated Uninstaller Scripts:**
-  - `uninstall-msys2.ps1`, `uninstall-rust.ps1`, `uninstall-go.ps1`, `uninstall-node.ps1`, `uninstall-python.ps1`.
-  - Dedicated uninstallation helpers for AI CLIs (`uninstall-cline.ps1`, `uninstall-hermes.ps1`, etc.).
+  - `uninstall-*.ps1` for clean removal and automated user PATH restoration.
 - [ ] **Toolchain Upgrader / Integrity Auditor:**
-  - Check upstream for new toolchain and CLI releases; perform clean in-place updates.
+  - Upstream release checkers and clean in-place update orchestrators.
 - [ ] **Headless CI Regression Testing:**
   - Automated GitHub Actions workflow running on clean Windows Server runner to test all installation scripts end-to-end without administrative elevation.
 **Exit:** Self-updating, self-healing, automated non-admin developer platform.

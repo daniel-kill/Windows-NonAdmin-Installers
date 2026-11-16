@@ -16,6 +16,11 @@ This repository provides reproducible, fully non-elevated installers for modern 
 
 ## Supported Toolchains & AI CLIs
 
+### Foundation & Prerequisites
+| Toolchain | Folder | Target Path | Key Components |
+| :--- | :--- | :--- | :--- |
+| **Gpg4win & GnuPG** | `Gpg4win-Installer/` | `$HOME\.local\gpg4win` | GnuPG core engine (`gpg.exe`, `gpgv.exe`, `dirmngr.exe`) & Kleopatra |
+
 ### Core Developer Toolchains
 | Toolchain | Folder | Target Path | Key Components |
 | :--- | :--- | :--- | :--- |
@@ -48,14 +53,17 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 # Display complete toolchain & CLI inventory status
 .\install-all.ps1 -List
 
-# Install all core toolchains and AI CLIs in one sequence
+# Install Gpg4win cryptographic foundation
+.\install-all.ps1 -Gpg4win
+
+# Install all tools (Prerequisites + Core Toolchains + AI CLIs) in one sequence
 .\install-all.ps1 -All
 
 # Install only the 6 AI Developer CLIs
 .\install-all.ps1 -CliTools
 
 # Selectively install specific tools
-.\install-all.ps1 -Antigravity -Ori -Cline
+.\install-all.ps1 -Gpg4win -MSYS2 -Rust
 
 # Force clean reinstallation
 .\install-all.ps1 -All -Force
@@ -73,7 +81,7 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 - **Permissions:** Standard User (no administrator / UAC elevation required).
 - **Disk Space:** ~5–8 GB free space on an NTFS drive for all tools combined.
 - **Dependencies:**
-  - GnuPG (`gpg.exe`) available in `PATH` (e.g. from Gpg4win or Git for Windows).
+  - GnuPG (`gpg.exe`) is required for verifying MSYS2, Rust, and release signatures. If not present on your system, run `Gpg4win-Installer\install-gpg4win.ps1` or `.\install-all.ps1 -Gpg4win`.
   - Active internet connection for artifact downloads.
 - **Path Rules:** Installation paths must not contain spaces, non-ASCII characters, or reparse points (symlinks/junctions).
 
@@ -96,8 +104,11 @@ Once installation finishes, close and reopen your terminal, CMD, Windows Termina
 Each directory is completely self-contained and modular:
 
 ```powershell
+# Foundation / Prerequisites
+cd Gpg4win-Installer; .\install-gpg4win.ps1
+
 # Core Toolchains
-cd MSYS2-Installer;   .\install-msys2.ps1
+cd ..\MSYS2-Installer;   .\install-msys2.ps1
 cd ..\Rust-Installer;  .\install-rust.ps1
 cd ..\Go-Installer;    .\install-go.ps1
 cd ..\Node-Installer;  .\install-node.ps1
@@ -120,7 +131,7 @@ cd ..\Copilot-CLI;     .\install-copilot.ps1
 | :--- | :--- |
 | **Privilege Model** | Zero elevation required. All operations scoped strictly to `$HOME` (`$HOME\msys64`, `$HOME\.local\...`, `$HOME\.npm-global`). |
 | **GPG Fingerprint Pinning** | MSYS2 (`0EBF782C5D53F7E5FB02A66746BD761F7A49B0EC`) and Rust (`108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE`). |
-| **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests (Go, Node, Python, Ori), SHA-512 (Antigravity), and Windows Authenticode signatures. |
+| **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests (Go, Node, Python, Ori, Gpg4win), SHA-512 (Antigravity), and Windows Authenticode signatures. |
 | **Fail-Fast Safety** | Any verification failure halts immediately before extraction or execution. Partial installs are cleaned up on error. |
 | **Environment Isolation** | User PATH changes are backed up with timestamped recovery files under each toolchain's `environment-backups/` folder. System/Machine PATH is never touched. |
 
@@ -134,6 +145,10 @@ cd ..\Copilot-CLI;     .\install-copilot.ps1
   pwsh -ExecutionPolicy Bypass -File .\install-all.ps1 -All
   ```
 - **"GnuPG was not found in PATH"**:
-  Ensure `gpg.exe` is installed and accessible in your PATH. If you have Git for Windows installed, it is typically located at `C:\Program Files\Git\usr\bin\gpg.exe`.
+  Install GnuPG non-admin directly from this repository:
+  ```powershell
+  cd Gpg4win-Installer
+  .\install-gpg4win.ps1
+  ```
 - **"Command not found after install"**:
   Restart your terminal session to ensure the refreshed User PATH is loaded by your shell.
