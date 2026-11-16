@@ -113,6 +113,56 @@
 
 ---
 
+## Phase 2.75 — Modern VCS Utilities, Search Tools, Editors & Agent Expansion (Completed)
+
+- [x] **Non-Admin PortableGit Installer (`PortableGit-Installer/`):**
+  - [x] Automated discovery and download of official 64-bit PortableGit (`.7z.exe`).
+  - [x] SHA-256 release digest calculation and verification.
+  - [x] High-speed non-elevated extraction via `7z.exe` into `$HOME\.local\git`.
+  - [x] Persistent User PATH update (`bin\`, `cmd\`, `usr\bin\`) with automated backup and `git --version` verification.
+- [x] **Non-Admin GitHub CLI Installer (`GitHub-CLI/`):**
+  - [x] Automated discovery of official `gh_*_windows_amd64.zip` and `checksums.txt`.
+  - [x] Cryptographic SHA-256 verification and Authenticode digital signature check (`GitHub, Inc.`).
+  - [x] Non-elevated extraction to `$HOME\.local\gh\bin\gh.exe`, User PATH configuration, and `gh --version` verification.
+- [x] **Non-Admin 7-Zip Console & Suite Installer (`7Zip-Installer/`):**
+  - [x] Automated discovery of official `7z*-x64.msi`.
+  - [x] SHA-256 verification and non-elevated administrative extraction (`msiexec.exe /a ... /qn TARGETDIR=...`) into `$HOME\.local\7zip`.
+  - [x] User PATH configuration, PATH backup, and functional `7z.exe` test.
+- [x] **Non-Admin ripgrep CLI Installer (`Ripgrep-CLI/`):**
+  - [x] Automated discovery of official `ripgrep-*-x86_64-pc-windows-msvc.zip` and `.sha256`.
+  - [x] Cryptographic SHA-256 verification and extraction to `$HOME\.local\ripgrep\bin\rg.exe`.
+  - [x] User PATH configuration and `rg --version` test.
+- [x] **Non-Admin fd CLI Installer (`Fd-CLI/`):**
+  - [x] Automated discovery of official `fd-*-x86_64-pc-windows-msvc.zip`.
+  - [x] SHA-256 release verification and extraction to `$HOME\.local\fd\bin\fd.exe`.
+  - [x] User PATH configuration and `fd --version` test.
+- [x] **Non-Admin jq CLI Installer (`Jq-CLI/`):**
+  - [x] Automated discovery of official `jq-win64.exe` and release hash.
+  - [x] SHA-256 verification and installation to `$HOME\.local\jq\bin\jq.exe`.
+  - [x] User PATH configuration and JSON query functional test (`jq -n '{"status": "ok"}'`).
+- [x] **Non-Admin VS Code Portable Installer (`VSCode-Installer/`):**
+  - [x] Automated resolution of Microsoft direct download URL for Windows x64 zip.
+  - [x] Extraction via 7-Zip into `$HOME\.local\vscode`.
+  - [x] Portable mode activation via dedicated `data/` directory (zero machine registry or `%APPDATA%` writes).
+  - [x] Authenticode digital signature validation (`Microsoft Corporation`).
+  - [x] User PATH configuration (`bin\code.cmd`), PATH backup, and `code -v` test.
+- [x] **Non-Admin Claude Code CLI Installer (`Claude-CLI/`):**
+  - [x] Node.js runtime prerequisite validation.
+  - [x] User-local npm global installation (`npm install -g @anthropic-ai/claude-code`) directed to `$HOME\.npm-global`.
+  - [x] User PATH configuration and `claude -v` test.
+- [x] **Non-Admin Aider Pair Programmer CLI Installer (`Aider-CLI/`):**
+  - [x] Python 3.10+ and Git prerequisite verification.
+  - [x] Provisioning of isolated virtualenv at `$HOME\.local\aider\venv`.
+  - [x] Installation of `aider-chat` with launcher shim `bin\aider.cmd`.
+  - [x] User PATH configuration and `aider --version` test.
+- [x] **Unified Multi-Toolchain CLI Runner (`install-all.ps1`) Expansion:**
+  - [x] Expanded toolchain inventory to 22 tools across 5 logical categories.
+  - [x] Added dedicated flags: `-Git`, `-Gh`, `-SevenZip`, `-Ripgrep`, `-Fd`, `-Jq`, `-VSCode`, `-Claude`, `-Aider`.
+  - [x] Updated interactive console menu and `-List` status dashboard.
+**Exit:** Comprehensive modern development environment with VCS, search utilities, portable IDE, and complete AI agent suite fully operable without administrator rights.
+
+---
+
 ## Phase 3 — Lifecycle Management & CI Automation (Future)
 
 - [ ] **Dedicated Uninstaller Scripts:**

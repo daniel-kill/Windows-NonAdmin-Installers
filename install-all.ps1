@@ -9,12 +9,21 @@ param(
     [switch]$Go,
     [switch]$Node,
     [switch]$Python,
+    [switch]$Git,
+    [switch]$Gh,
+    [switch]$SevenZip,
+    [switch]$Ripgrep,
+    [switch]$Fd,
+    [switch]$Jq,
+    [switch]$VSCode,
     [switch]$Cline,
     [switch]$Hermes,
     [switch]$Vibe,
     [switch]$Ori,
     [switch]$Antigravity,
     [switch]$Copilot,
+    [switch]$Claude,
+    [switch]$Aider,
     [switch]$CliTools,
     [switch]$Force,
     [switch]$List,
@@ -56,7 +65,7 @@ $ToolchainRegistry = @(
         InstallDir  = Join-Path $HOME 'msys64'
         ScriptPath  = Join-Path $ScriptRoot 'MSYS2-Installer\install-msys2.ps1'
         Description = 'Unix environment, UCRT64 GCC/G++, GNU binutils, Make, pkg-config'
-        Category    = 'Core'
+        Category    = 'Core Toolchains'
     }
     [pscustomobject]@{
         Id          = 'Rust'
@@ -64,7 +73,7 @@ $ToolchainRegistry = @(
         InstallDir  = Join-Path $HOME '.local\rust'
         ScriptPath  = Join-Path $ScriptRoot 'Rust-Installer\install-rust.ps1'
         Description = 'Official Rust GNU toolchain (rustc, cargo, rustdoc) linked to UCRT64'
-        Category    = 'Core'
+        Category    = 'Core Toolchains'
     }
     [pscustomobject]@{
         Id          = 'Go'
@@ -72,7 +81,7 @@ $ToolchainRegistry = @(
         InstallDir  = Join-Path $HOME '.local\go'
         ScriptPath  = Join-Path $ScriptRoot 'Go-Installer\install-go.ps1'
         Description = 'Official Go compiler, tools, GOPATH setup, and standard libraries'
-        Category    = 'Core'
+        Category    = 'Core Toolchains'
     }
     [pscustomobject]@{
         Id          = 'Node'
@@ -80,7 +89,7 @@ $ToolchainRegistry = @(
         InstallDir  = Join-Path $HOME '.local\node'
         ScriptPath  = Join-Path $ScriptRoot 'Node-Installer\install-node.ps1'
         Description = 'Node.js LTS runtime, npm package manager, and .npm-global setup'
-        Category    = 'Core'
+        Category    = 'Core Toolchains'
     }
     [pscustomobject]@{
         Id          = 'Python'
@@ -88,7 +97,65 @@ $ToolchainRegistry = @(
         InstallDir  = Join-Path $HOME '.local\python'
         ScriptPath  = Join-Path $ScriptRoot 'Python-Installer\install-python.ps1'
         Description = 'Python 3 runtime, pip package manager, and site-packages setup'
-        Category    = 'Core'
+        Category    = 'Core Toolchains'
+    }
+    # VCS & Core Utilities
+    [pscustomobject]@{
+        Id          = 'Git'
+        Name        = 'PortableGit'
+        InstallDir  = Join-Path $HOME '.local\git'
+        ScriptPath  = Join-Path $ScriptRoot 'PortableGit-Installer\install-git.ps1'
+        Description = 'Official Git for Windows portable distribution with Git Bash'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Gh'
+        Name        = 'GitHub CLI (gh)'
+        InstallDir  = Join-Path $HOME '.local\gh'
+        ScriptPath  = Join-Path $ScriptRoot 'GitHub-CLI\install-gh.ps1'
+        Description = 'Official GitHub CLI binary for issues, PRs, releases, and auth'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'SevenZip'
+        Name        = '7-Zip Console & Suite'
+        InstallDir  = Join-Path $HOME '.local\7zip'
+        ScriptPath  = Join-Path $ScriptRoot '7Zip-Installer\install-7zip.ps1'
+        Description = '7-Zip archiver CLI (7z.exe) and GUI via non-admin MSI extraction'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Ripgrep'
+        Name        = 'ripgrep (rg)'
+        InstallDir  = Join-Path $HOME '.local\ripgrep'
+        ScriptPath  = Join-Path $ScriptRoot 'Ripgrep-CLI\install-ripgrep.ps1'
+        Description = 'Ultra-fast recursive regex search utility respecting .gitignore'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Fd'
+        Name        = 'fd (find alternative)'
+        InstallDir  = Join-Path $HOME '.local\fd'
+        ScriptPath  = Join-Path $ScriptRoot 'Fd-CLI\install-fd.ps1'
+        Description = 'Fast, user-friendly alternative to find / dir /s'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Jq'
+        Name        = 'jq (JSON processor)'
+        InstallDir  = Join-Path $HOME '.local\jq'
+        ScriptPath  = Join-Path $ScriptRoot 'Jq-CLI\install-jq.ps1'
+        Description = 'Command-line JSON processor and filter'
+        Category    = 'VCS & Utilities'
+    }
+    # Editors & IDEs
+    [pscustomobject]@{
+        Id          = 'VSCode'
+        Name        = 'VS Code Portable'
+        InstallDir  = Join-Path $HOME '.local\vscode'
+        ScriptPath  = Join-Path $ScriptRoot 'VSCode-Installer\install-vscode.ps1'
+        Description = 'Official Visual Studio Code in self-contained portable mode (data/)'
+        Category    = 'Editors & IDEs'
     }
     # AI Developer CLIs
     [pscustomobject]@{
@@ -139,6 +206,22 @@ $ToolchainRegistry = @(
         Description = 'GitHub Copilot CLI (@github/copilot) via user npm prefix'
         Category    = 'AI CLI'
     }
+    [pscustomobject]@{
+        Id          = 'Claude'
+        Name        = 'Claude Code CLI'
+        InstallDir  = Join-Path $HOME '.npm-global'
+        ScriptPath  = Join-Path $ScriptRoot 'Claude-CLI\install-claude.ps1'
+        Description = 'Anthropic Claude Code CLI (@anthropic-ai/claude-code)'
+        Category    = 'AI CLI'
+    }
+    [pscustomobject]@{
+        Id          = 'Aider'
+        Name        = 'Aider CLI'
+        InstallDir  = Join-Path $HOME '.local\aider'
+        ScriptPath  = Join-Path $ScriptRoot 'Aider-CLI\install-aider.ps1'
+        Description = 'Aider AI terminal pair programmer in isolated virtualenv'
+        Category    = 'AI CLI'
+    }
 )
 
 function Show-Help {
@@ -150,17 +233,18 @@ function Show-Help {
 
 SYNOPSIS:
   install-all.ps1 [-All] [-CliTools] [-Gpg4win] [-KeePassXC] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
-                  [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot]
+                  [-Git] [-Gh] [-SevenZip] [-Ripgrep] [-Fd] [-Jq] [-VSCode]
+                  [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider]
                   [-Force] [-List] [-Help]
 
 DESCRIPTION:
-  Automates user-local, zero-administrator installation of developer toolchains
-  and AI developer CLIs under Windows 10/11 x86-64 using PowerShell 7.
+  Automates user-local, zero-administrator installation of developer toolchains,
+  utilities, editors, and AI developer CLIs under Windows 10/11 x86-64 using PowerShell 7.
   All downloads are verified against cryptographic checksums and PGP signatures.
 
 OPTIONS:
-  -All             Install all available prerequisites, toolchains, and AI CLIs.
-  -CliTools        Install only the 6 AI Developer CLIs (Cline, Hermes, Vibe, Ori, Antigravity, Copilot).
+  -All             Install all available prerequisites, toolchains, utilities, and AI CLIs.
+  -CliTools        Install only the 8 AI Developer CLIs (Cline, Hermes, Vibe, Ori, Antigravity, Copilot, Claude, Aider).
   -Gpg4win         Install Gpg4win and GnuPG (gpg.exe) into `$HOME\.local\gpg4win.
   -KeePassXC       Install KeePassXC GUI and keepassxc-cli into `$HOME\.local\keepassxc.
   -MSYS2           Install MSYS2 with UCRT64 GCC, Make, and binutils into `$HOME\msys64.
@@ -168,12 +252,21 @@ OPTIONS:
   -Go              Install official Go compiler & tools into `$HOME\.local\go.
   -Node            Install Node.js LTS and NPM into `$HOME\.local\node.
   -Python          Install portable Python 3 with pip into `$HOME\.local\python.
+  -Git             Install PortableGit with Git Bash into `$HOME\.local\git.
+  -Gh              Install GitHub CLI (gh.exe) into `$HOME\.local\gh.
+  -SevenZip        Install 7-Zip archiver CLI (7z.exe) into `$HOME\.local\7zip.
+  -Ripgrep         Install ripgrep fast search (rg.exe) into `$HOME\.local\ripgrep.
+  -Fd              Install fd finder (fd.exe) into `$HOME\.local\fd.
+  -Jq              Install jq JSON processor (jq.exe) into `$HOME\.local\jq.
+  -VSCode          Install Visual Studio Code portable into `$HOME\.local\vscode.
   -Cline           Install Cline CLI into `$HOME\.npm-global.
   -Hermes          Install Hermes Agent CLI into `$HOME\.local\hermes.
   -Vibe            Install Mistral Vibe CLI into `$HOME\.local\vibe.
   -Ori             Install OpenRouter Ori CLI into `$HOME\.local\ori.
   -Antigravity     Install Google Antigravity CLI (agy) into `$HOME\.local\antigravity.
   -Copilot         Install GitHub Copilot CLI into `$HOME\.npm-global.
+  -Claude          Install Anthropic Claude Code CLI into `$HOME\.npm-global.
+  -Aider           Install Aider terminal pair programmer into `$HOME\.local\aider.
   -Force           Force re-installation (removes existing directory before reinstalling).
   -List            Display the current installation status of all toolchains.
   -Help            Show this detailed help manual and usage examples.
@@ -242,7 +335,7 @@ if ($All) {
     $ToolchainRegistry | ForEach-Object { $SelectedIds.Add($_.Id) }
 }
 elseif ($CliTools) {
-    @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot') | ForEach-Object { $SelectedIds.Add($_) }
+    @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider') | ForEach-Object { $SelectedIds.Add($_) }
 }
 else {
     if ($Gpg4win)     { $SelectedIds.Add('Gpg4win') }
@@ -252,12 +345,21 @@ else {
     if ($Go)          { $SelectedIds.Add('Go') }
     if ($Node)        { $SelectedIds.Add('Node') }
     if ($Python)      { $SelectedIds.Add('Python') }
+    if ($Git)         { $SelectedIds.Add('Git') }
+    if ($Gh)          { $SelectedIds.Add('Gh') }
+    if ($SevenZip)    { $SelectedIds.Add('SevenZip') }
+    if ($Ripgrep)     { $SelectedIds.Add('Ripgrep') }
+    if ($Fd)          { $SelectedIds.Add('Fd') }
+    if ($Jq)          { $SelectedIds.Add('Jq') }
+    if ($VSCode)      { $SelectedIds.Add('VSCode') }
     if ($Cline)       { $SelectedIds.Add('Cline') }
     if ($Hermes)      { $SelectedIds.Add('Hermes') }
     if ($Vibe)        { $SelectedIds.Add('Vibe') }
     if ($Ori)         { $SelectedIds.Add('Ori') }
     if ($Antigravity) { $SelectedIds.Add('Antigravity') }
     if ($Copilot)     { $SelectedIds.Add('Copilot') }
+    if ($Claude)      { $SelectedIds.Add('Claude') }
+    if ($Aider)       { $SelectedIds.Add('Aider') }
 }
 
 # Interactive Menu when run bare and not in headless non-interactive mode
@@ -287,12 +389,12 @@ if ($SelectedIds.Count -eq 0) {
 
         Write-Host
         Write-Host "  [A]  Install All Tools (Prerequisites + Toolchains + CLIs)" -ForegroundColor Cyan
-        Write-Host "  [C]  Install All 6 AI Developer CLIs" -ForegroundColor Cyan
+        Write-Host "  [C]  Install All 8 AI Developer CLIs" -ForegroundColor Cyan
         Write-Host "  [L]  List Full Inventory" -ForegroundColor Cyan
         Write-Host "  [H]  View Detailed Help & Flags" -ForegroundColor Cyan
         Write-Host "  [Q]  Quit" -ForegroundColor Red
         Write-Host
-        $Choice = Read-Host "Select an option (1-13, A, C, L, H, Q)"
+        $Choice = Read-Host "Select an option (1-$($ToolchainRegistry.Count), A, C, L, H, Q)"
 
         if ($Choice -match '^\d+$' -and [int]$Choice -ge 1 -and [int]$Choice -le $ToolchainRegistry.Count) {
             $Index = [int]$Choice - 1
@@ -304,7 +406,7 @@ if ($SelectedIds.Count -eq 0) {
             break
         }
         elseif ($Choice -ieq 'C') {
-            @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot') | ForEach-Object { $SelectedIds.Add($_) }
+            @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider') | ForEach-Object { $SelectedIds.Add($_) }
             break
         }
         elseif ($Choice -ieq 'L') {

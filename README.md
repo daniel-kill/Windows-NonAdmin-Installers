@@ -31,6 +31,21 @@ This repository provides reproducible, fully non-elevated installers for modern 
 | **Node.js LTS** | `Node-Installer/` | `$HOME\.local\node` | Node.js LTS (`node.exe`), `npm.cmd`, `npx.cmd`, `$HOME\.npm-global` |
 | **Python Portable** | `Python-Installer/` | `$HOME\.local\python` | Python 3 embeddable runtime, bootstrapped `pip`, `Scripts\` |
 
+### VCS & Core Utilities
+| Tool / Utility | Folder | Target Path | Key Components |
+| :--- | :--- | :--- | :--- |
+| **PortableGit** | `PortableGit-Installer/` | `$HOME\.local\git` | Git for Windows portable (`git.exe`), Git Bash, OpenSSH, curl |
+| **GitHub CLI (gh)** | `GitHub-CLI/` | `$HOME\.local\gh` | Official GitHub CLI (`gh.exe`) for issues, PRs, releases, and auth |
+| **7-Zip Console** | `7Zip-Installer/` | `$HOME\.local\7zip` | 7-Zip archiver CLI (`7z.exe`), `7z.dll`, GUI extracted non-admin |
+| **ripgrep (rg)** | `Ripgrep-CLI/` | `$HOME\.local\ripgrep` | Ultra-fast recursive regex search engine respecting `.gitignore` |
+| **fd** | `Fd-CLI/` | `$HOME\.local\fd` | Simple, fast, and user-friendly alternative to `find` / `dir /s` |
+| **jq** | `Jq-CLI/` | `$HOME\.local\jq` | Lightweight and flexible command-line JSON processor |
+
+### Editors & Development Environments
+| Editor | Folder | Target Path | Key Components |
+| :--- | :--- | :--- | :--- |
+| **VS Code Portable** | `VSCode-Installer/` | `$HOME\.local\vscode` | Official VS Code portable (`Code.exe`) with isolated `data/` directory |
+
 ### AI Developer CLIs
 | Agent CLI | Folder | Source / Type | Target Path | Official Docs |
 | :--- | :--- | :--- | :--- | :--- |
@@ -40,6 +55,8 @@ This repository provides reproducible, fully non-elevated installers for modern 
 | **OpenRouter Ori** | `Ori-CLI/` | Native x64 Binary | `$HOME\.local\ori\bin\ori.exe` | [openrouter.ai/ori](https://openrouter.ai/ori) |
 | **Google Antigravity** | `Antigravity-CLI/` | Native x64 Binary | `$HOME\.local\antigravity\bin\agy.exe` | [antigravity.google/product/antigravity-cli](https://antigravity.google/product/antigravity-cli) |
 | **GitHub Copilot** | `Copilot-CLI/` | npm (`@github/copilot`) | `$HOME\.npm-global` | [github.com/github/copilot-cli](https://github.com/github/copilot-cli) |
+| **Claude Code** | `Claude-CLI/` | npm (`@anthropic-ai/claude-code`) | `$HOME\.npm-global` | [docs.anthropic.com](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) |
+| **Aider Pair Programmer** | `Aider-CLI/` | Python (`aider-chat`) | `$HOME\.local\aider` | [aider.chat](https://aider.chat/) |
 
 ---
 
@@ -51,7 +68,7 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 # Show interactive console menu
 .\install-all.ps1
 
-# Display complete toolchain & CLI inventory status
+# Display complete toolchain & CLI inventory status (22 managed tools)
 .\install-all.ps1 -List
 
 # Install Gpg4win cryptographic foundation
@@ -60,14 +77,20 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 # Install KeePassXC password manager & CLI
 .\install-all.ps1 -KeePassXC
 
-# Install all tools (Prerequisites + Core Toolchains + AI CLIs) in one sequence
+# Install all tools across all categories in one sequence
 .\install-all.ps1 -All
 
-# Install only the 6 AI Developer CLIs
+# Install only the 8 AI Developer CLIs
 .\install-all.ps1 -CliTools
 
+# Install modern VCS & core utilities
+.\install-all.ps1 -Git -Gh -SevenZip -Ripgrep -Fd -Jq
+
+# Install portable code editor
+.\install-all.ps1 -VSCode
+
 # Selectively install specific tools
-.\install-all.ps1 -Gpg4win -MSYS2 -Rust
+.\install-all.ps1 -Gpg4win -Git -Gh -VSCode -Claude
 
 # Force clean reinstallation
 .\install-all.ps1 -All -Force
@@ -109,23 +132,36 @@ Each directory is completely self-contained and modular:
 
 ```powershell
 # Foundation & Security Tools
-cd Gpg4win-Installer;   .\install-gpg4win.ps1
+cd Gpg4win-Installer;      .\install-gpg4win.ps1
 cd ..\KeePassXC-Installer; .\install-keepassxc.ps1
 
 # Core Toolchains
-cd ..\MSYS2-Installer;   .\install-msys2.ps1
-cd ..\Rust-Installer;  .\install-rust.ps1
-cd ..\Go-Installer;    .\install-go.ps1
-cd ..\Node-Installer;  .\install-node.ps1
-cd ..\Python-Installer;.\install-python.ps1
+cd ..\MSYS2-Installer;     .\install-msys2.ps1
+cd ..\Rust-Installer;      .\install-rust.ps1
+cd ..\Go-Installer;        .\install-go.ps1
+cd ..\Node-Installer;      .\install-node.ps1
+cd ..\Python-Installer;    .\install-python.ps1
+
+# VCS & Core Terminal Utilities
+cd ..\PortableGit-Installer; .\install-git.ps1
+cd ..\GitHub-CLI;          .\install-gh.ps1
+cd ..\7Zip-Installer;       .\install-7zip.ps1
+cd ..\Ripgrep-CLI;          .\install-ripgrep.ps1
+cd ..\Fd-CLI;               .\install-fd.ps1
+cd ..\Jq-CLI;               .\install-jq.ps1
+
+# Editors & Development Environments
+cd ..\VSCode-Installer;     .\install-vscode.ps1
 
 # AI Developer CLIs
-cd ..\Cline-CLI;       .\install-cline.ps1
-cd ..\Hermes-CLI;      .\install-hermes.ps1
-cd ..\Vibe-CLI;        .\install-vibe.ps1
-cd ..\Ori-CLI;         .\install-ori.ps1
-cd ..\Antigravity-CLI; .\install-antigravity.ps1
-cd ..\Copilot-CLI;     .\install-copilot.ps1
+cd ..\Cline-CLI;            .\install-cline.ps1
+cd ..\Hermes-CLI;           .\install-hermes.ps1
+cd ..\Vibe-CLI;             .\install-vibe.ps1
+cd ..\Ori-CLI;              .\install-ori.ps1
+cd ..\Antigravity-CLI;      .\install-antigravity.ps1
+cd ..\Copilot-CLI;          .\install-copilot.ps1
+cd ..\Claude-CLI;           .\install-claude.ps1
+cd ..\Aider-CLI;            .\install-aider.ps1
 ```
 
 ---
@@ -136,7 +172,8 @@ cd ..\Copilot-CLI;     .\install-copilot.ps1
 | :--- | :--- |
 | **Privilege Model** | Zero elevation required. All operations scoped strictly to `$HOME` (`$HOME\msys64`, `$HOME\.local\...`, `$HOME\.npm-global`). |
 | **GPG Fingerprint Pinning** | MSYS2 (`0EBF782C5D53F7E5FB02A66746BD761F7A49B0EC`), Rust (`108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE`), and KeePassXC (`BF5A669F2272CF4324C1FDA8CFB4C2166397D0D2`). |
-| **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests (Go, Node, Python, Ori, Gpg4win, KeePassXC), SHA-512 (Antigravity), and Windows Authenticode signatures. |
+| **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests (Go, Node, Python, Ori, Gpg4win, KeePassXC, GitHub CLI, ripgrep, fd, jq, PortableGit, 7-Zip), SHA-512 (Antigravity), and Windows Authenticode signatures (`GitHub, Inc.`, `Microsoft Corporation`, `DroidMonkey Apps, LLC`, etc.). |
+| **Zero-Registry Isolation** | Portable modes activated where available (e.g. VS Code isolated `data/` directory, KeePassXC `.portable` flag) preventing `%APPDATA%` and registry pollution. |
 | **Fail-Fast Safety** | Any verification failure halts immediately before extraction or execution. Partial installs are cleaned up on error. |
 | **Environment Isolation** | User PATH changes are backed up with timestamped recovery files under each toolchain's `environment-backups/` folder. System/Machine PATH is never touched. |
 
