@@ -2,11 +2,11 @@
 
 ## Goal & Constraints
 
-- **Primary Objective:** Provide automated, fully non-elevated (zero-administrator) developer toolchain installers for Windows 10/11 x86-64 using PowerShell 7, guaranteeing end-to-end cryptographic verification and zero pollution of machine-wide system state.
+- **Primary Objective:** Provide automated, fully non-elevated (zero-administrator) developer toolchain and AI agent CLI installers for Windows 10/11 x86-64 using PowerShell 7, guaranteeing end-to-end cryptographic verification and zero pollution of machine-wide system state.
 - **Key Constraints:**
   - **Zero Elevation:** Under no circumstances should scripts invoke UAC, require Administrator group membership, or modify system-wide machine registries.
-  - **Local Scope:** All binaries, toolchains, caches, and configuration must reside strictly within `$HOME` (`$HOME\msys64`, `$HOME\.local\...`).
-  - **Strict Cryptographic Authentication:** Pinned OpenPGP primary key fingerprints, detached signature verification (`GOODSIG`/`VALIDSIG`), SHA-256 release checksum verification, and Authenticode signature checks prior to extraction.
+  - **Local Scope:** All binaries, toolchains, caches, and configuration must reside strictly within `$HOME` (`$HOME\msys64`, `$HOME\.local\...`, `$HOME\.npm-global`).
+  - **Strict Cryptographic Authentication:** Pinned OpenPGP primary key fingerprints, detached signature verification (`GOODSIG`/`VALIDSIG`), SHA-256 / SHA-512 release checksum verification, and Authenticode signature checks prior to execution.
   - **Environment Hygiene:** User PATH mutations must be backed up to timestamped restore files before alteration. Deduplicate PATH entries and avoid mutating the machine PATH.
   - **Fail-Fast & Cleanup:** Halt immediately upon any verification anomaly; clean up partial or corrupted extractions.
 
@@ -70,17 +70,45 @@
 
 ---
 
+## Phase 2.5 — AI Developer CLI Expansion (Completed)
+
+- [x] **Cline CLI Installer (`Cline-CLI/`):**
+  - [x] Node.js prerequisite inspection.
+  - [x] User-local `npm install -g cline` directed to `$HOME\.npm-global`.
+  - [x] User PATH configuration and `cline --version` verification.
+- [x] **Hermes Agent CLI Installer (`Hermes-CLI/`):**
+  - [x] Python prerequisite inspection.
+  - [x] Isolated virtualenv / pip installation of `hermes-agent` under `$HOME\.local\hermes`.
+  - [x] Launcher shim `hermes.cmd` in `$HOME\.local\hermes\bin` and User PATH update.
+- [x] **Mistral Vibe CLI Installer (`Vibe-CLI/`):**
+  - [x] Python 3.11+ prerequisite inspection.
+  - [x] Isolated virtualenv / pip installation of `mistral-vibe` under `$HOME\.local\vibe`.
+  - [x] Launcher shim `vibe.cmd` in `$HOME\.local\vibe\bin` and User PATH update.
+- [x] **OpenRouter Ori CLI Installer (`Ori-CLI/`):**
+  - [x] Automated download of official native binary `ori-windows-x64.exe` and `SHA256SUMS`.
+  - [x] Cryptographic SHA-256 verification.
+  - [x] Installation under `$HOME\.local\ori\bin\ori.exe` and User PATH update.
+- [x] **Google Antigravity CLI Installer (`Antigravity-CLI/`):**
+  - [x] Automated query of official release manifest (`windows_amd64.json`).
+  - [x] Cryptographic SHA-512 verification of native binary `cli_windows_x64.exe`.
+  - [x] Installation under `$HOME\.local\antigravity\bin\agy.exe` and User PATH update.
+- [x] **GitHub Copilot CLI Installer (`Copilot-CLI/`):**
+  - [x] Node.js prerequisite inspection.
+  - [x] User-local `npm install -g @github/copilot` directed to `$HOME\.npm-global`.
+  - [x] User PATH configuration and `copilot --version` verification.
+- [x] **Integrated CLI Provisioning:**
+  - [x] Added `-CliTools` flag and dedicated interactive menu options in `install-all.ps1`.
+**Exit:** Complete autonomous coding agent CLI suite provisioned without administrator rights.
+
+---
+
 ## Phase 3 — Lifecycle Management & CI Automation (Future)
 
 - [ ] **Dedicated Uninstaller Scripts:**
-  - `uninstall-msys2.ps1`: Safe removal of `$HOME\msys64` with optional backup of user dotfiles.
-  - `uninstall-rust.ps1`: Clean deletion of `$HOME\.local\rust` and automated restoration of original user PATH from backup files.
-  - `uninstall-go.ps1`: Clean deletion of `$HOME\.local\go` and restoration of user PATH.
-  - `uninstall-node.ps1`: Clean deletion of `$HOME\.local\node` and restoration of user PATH.
-  - `uninstall-python.ps1`: Clean deletion of `$HOME\.local\python` and restoration of user PATH.
+  - `uninstall-msys2.ps1`, `uninstall-rust.ps1`, `uninstall-go.ps1`, `uninstall-node.ps1`, `uninstall-python.ps1`.
+  - Dedicated uninstallation helpers for AI CLIs (`uninstall-cline.ps1`, `uninstall-hermes.ps1`, etc.).
 - [ ] **Toolchain Upgrader / Integrity Auditor:**
-  - Check upstream for new MSYS2, Rust, Go, Node.js, and Python releases; perform clean in-place updates.
-  - Integrity checker verifying installed binaries against checksums.
+  - Check upstream for new toolchain and CLI releases; perform clean in-place updates.
 - [ ] **Headless CI Regression Testing:**
   - Automated GitHub Actions workflow running on clean Windows Server runner to test all installation scripts end-to-end without administrative elevation.
 **Exit:** Self-updating, self-healing, automated non-admin developer platform.

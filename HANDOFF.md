@@ -2,48 +2,58 @@
 
 ## Current State
 
-Phase 2 (Toolchain Expansion) is complete. The repository now features a complete multi-language developer platform containing five production-grade, cryptographically verified, non-administrator installer suites and a top-level unified CLI orchestrator:
+The repository is a fully unified non-administrator developer platform for Windows 10/11 x86-64, hosting **11 dedicated, cryptographically verified installers** and a top-level unified CLI orchestrator:
 
-1. `MSYS2-Installer`: Provisions MSYS2 with the full UCRT64 GCC toolchain group, GNU binutils, GNU Make, and pkg-config into `$HOME\msys64`.
-2. `Rust-Installer`: Provisions the official Rust standalone GNU toolchain (`x86_64-pc-windows-gnu`) into `$HOME\.local\rust`, linking against MSYS2's UCRT64 toolchain.
-3. `Go-Installer`: Provisions the official Go compiler and tools into `$HOME\.local\go`, setting `GOROOT` and `GOPATH` (`$HOME\go`).
-4. `Node-Installer`: Provisions official Node.js LTS into `$HOME\.local\node` and configures a non-elevated user global package directory at `$HOME\.npm-global`.
-5. `Python-Installer`: Provisions portable Python 3 into `$HOME\.local\python`, configures standard site-packages in `._pth`, and bootstraps `pip` via `get-pip.py`.
-6. `install-all.ps1`: Top-level unified CLI runner with interactive console menu, detailed `--help` manual, inventory status check (`-List`), and batch provisioning flags (`-All`, `-Force`, selective toolchains).
+### 1. Core Language Toolchains
+1. `MSYS2-Installer`: Provisions MSYS2, UCRT64 GCC/G++, binutils, Make, and pkg-config into `$HOME\msys64`.
+2. `Rust-Installer`: Provisions official Rust standalone GNU (`x86_64-pc-windows-gnu`) into `$HOME\.local\rust`.
+3. `Go-Installer`: Provisions official Go compiler and tools into `$HOME\.local\go`, setting `GOROOT` and `GOPATH` (`$HOME\go`).
+4. `Node-Installer`: Provisions Node.js LTS into `$HOME\.local\node` and configures user prefix at `$HOME\.npm-global`.
+5. `Python-Installer`: Provisions portable Python 3 into `$HOME\.local\python`, configures site-packages, and bootstraps `pip`.
+
+### 2. AI Developer CLIs
+6. `Cline-CLI`: Autonomous coding agent CLI installed globally in user space (`$HOME\.npm-global`).
+7. `Hermes-CLI`: Nous Research Hermes Agent CLI in an isolated user virtualenv (`$HOME\.local\hermes`).
+8. `Vibe-CLI`: Mistral AI Vibe coding assistant CLI in an isolated user virtualenv (`$HOME\.local\vibe`).
+9. `Ori-CLI`: OpenRouter Ori CLI native Windows binary (`$HOME\.local\ori\bin\ori.exe`) verified via `SHA256SUMS`.
+10. `Antigravity-CLI`: Google Antigravity CLI native Windows binary (`$HOME\.local\antigravity\bin\agy.exe`) verified via SHA-512 manifest.
+11. `Copilot-CLI`: GitHub Copilot CLI (`@github/copilot`) installed in user space (`$HOME\.npm-global`).
+
+### 3. Unified Orchestrator
+- `install-all.ps1`: Interactive console menu, `-List` status dashboard, detailed `-Help` manual, batch flags (`-All`, `-CliTools`, `-Force`), and dependency management.
 
 ---
 
-## Completed
+## Completed Checklist
 
-- [x] **Phase 0 — Core Modular Implementations:**
-  - MSYS2: Steps 01–05 (download, key import, archive verification, SFX extraction, UCRT64 GCC toolchain).
-  - Rust: Steps 01–03 (manifest auth, standalone extraction, user PATH configuration).
-- [x] **Phase 1 — Orchestrations & Documentation Baseline:**
-  - `install-msys2.ps1` and `install-rust.ps1` master orchestrators.
-  - Baseline documentation suite: `AGENTS.md`, `README.md`, `ROADMAP.md`, `HANDOFF.md`.
-- [x] **Phase 2 — Toolchain Expansion:**
-  - **Go Installer (`Go-Installer/`):** `01-download-go.ps1`, `02-install-go.ps1`, `03-configure-go-environment.ps1`, `install-go.ps1`, `START_HERE.md`.
-  - **Node.js Installer (`Node-Installer/`):** `01-download-node.ps1`, `02-install-node.ps1`, `03-configure-node-environment.ps1`, `install-node.ps1`, `START_HERE.md`.
-  - **Python Installer (`Python-Installer/`):** `01-download-python.ps1`, `02-install-python.ps1`, `03-configure-python-environment.ps1`, `install-python.ps1`, `START_HERE.md`.
-  - **Unified Runner (`install-all.ps1`):** Interactive menu, detailed help manual with examples, status dashboard, dependency-aware ordering (Rust requires MSYS2), and executive summary report.
-  - **Documentation Alignment:** `README.md` and `ROADMAP.md` updated with comprehensive guides and completed milestone tracking.
+- [x] **Phase 0 — Core Modular Implementations:** MSYS2 & Rust modular steps.
+- [x] **Phase 1 — Orchestrations & Documentation Baseline:** Master scripts and repository standards.
+- [x] **Phase 2 — Toolchain Expansion:** Go, Node.js, Python, and `install-all.ps1`.
+- [x] **Phase 2.5 — AI Developer CLIs:**
+  - [x] `Cline-CLI/` (prereq check, npm user-global install, PATH config, `install-cline.ps1`, `START_HERE.md`).
+  - [x] `Hermes-CLI/` (prereq check, isolated venv install, launcher shim, PATH config, `install-hermes.ps1`, `START_HERE.md`).
+  - [x] `Vibe-CLI/` (prereq check, isolated venv install, launcher shim, PATH config, `install-vibe.ps1`, `START_HERE.md`).
+  - [x] `Ori-CLI/` (binary download, SHA256SUMS verification, binary install, PATH config, `install-ori.ps1`, `START_HERE.md`).
+  - [x] `Antigravity-CLI/` (manifest query, SHA-512 verification, binary install, PATH config, `install-antigravity.ps1`, `START_HERE.md`).
+  - [x] `Copilot-CLI/` (prereq check, npm user-global install, PATH config, `install-copilot.ps1`, `START_HERE.md`).
+  - [x] `install-all.ps1` expanded with `-CliTools`, individual CLI flags, and interactive menu options.
+  - [x] `README.md` and `ROADMAP.md` updated with full tables, quickstarts, and milestone tracking.
 
 ---
 
 ## In Progress & Immediate Next Steps
 
-1. **User Review:** Review Phase 2 deliverables with the user.
+1. **User Review:** Review the new CLI installers and test capabilities with the user.
 2. **Phase 3 Scoping:**
-   - Implement dedicated uninstaller scripts (`uninstall-msys2.ps1`, `uninstall-rust.ps1`, `uninstall-go.ps1`, `uninstall-node.ps1`, `uninstall-python.ps1`) to provide clean rollbacks and PATH restorations.
-   - Design automated GitHub Actions CI matrix on clean Windows Server runner.
+   - Develop dedicated uninstallation scripts (`uninstall-*.ps1`) for clean rollbacks and PATH restoration.
+   - Design automated regression test workflow.
 3. **Commit & Push:** Stage all newly created and updated files, create GPG-signed commit, and push to `origin/master` upon confirmation.
 
 ---
 
 ## Blockers & Gotchas
 
-- **PowerShell Version:** All scripts require PowerShell 7 (`pwsh.exe`) with `-ExecutionPolicy Bypass`. Legacy Windows PowerShell 5.1 is unsupported.
-- **Dependency Ordering:** The `Rust-Installer` requires MSYS2 UCRT64 for its C/C++ linker tools. The `install-all.ps1` runner automatically detects this and orders MSYS2 ahead of Rust.
-- **Environment Refresh:** Modifying the Windows Registry User `Path` affects new processes immediately, but existing terminal windows must be restarted to inherit updated paths.
-- **Node.js Global Packages:** Global npm packages are directed to `$HOME\.npm-global` via `.npmrc` prefix configuration, ensuring `npm install -g` succeeds without elevation.
-- **Python site-packages:** Embeddable Python requires `import site` enabled in `*._pth` to find packages installed via `pip install`; the installer configures this automatically.
+- **PowerShell Version:** Requires PowerShell 7 (`pwsh.exe`) with `-ExecutionPolicy Bypass`.
+- **Node.js-based CLIs:** `Cline` and `Copilot` require Node.js. If missing, running `..\Node-Installer\install-node.ps1` resolves this prerequisite immediately.
+- **Python-based CLIs:** `Hermes` and `Vibe` require Python 3.10+. If missing, running `..\Python-Installer\install-python.ps1` resolves this prerequisite immediately.
+- **Environment Refresh:** Modifying the Windows Registry User `Path` takes effect immediately for new shells, but active terminal sessions must be restarted to inherit the refreshed PATH.
