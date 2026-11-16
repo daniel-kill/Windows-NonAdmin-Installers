@@ -2,7 +2,7 @@
 
 Automated, cryptographically authenticated, zero-administrator developer toolchain installers for Windows 10 and 11 (x86-64) built in PowerShell 7.
 
-This repository provides reproducible, fully non-elevated installers for modern developer toolchains. Every binary and archive is cryptographically verified (pinned OpenPGP signatures, SHA-256 release checksums, and Authenticode inspection) before execution, and all components install strictly into the current user's profile (`$HOME\msys64` and `$HOME\.local\rust`) without requiring UAC elevation or modifying machine-wide system state.
+This repository provides reproducible, fully non-elevated installers for modern developer toolchains. Every binary and archive is cryptographically verified (pinned OpenPGP signatures, official SHA-256 release checksums, and Authenticode inspection) before extraction, and all components install strictly into the current user's profile (`$HOME\msys64` and `$HOME\.local\...`) without requiring UAC elevation or modifying machine-wide system state.
 
 ---
 
@@ -16,29 +16,72 @@ This repository provides reproducible, fully non-elevated installers for modern 
 
 ## Toolchains Provided
 
+| Toolchain | Folder | Target Path | Key Included Components |
+| :--- | :--- | :--- | :--- |
+| **MSYS2 & UCRT64** | `MSYS2-Installer/` | `$HOME\msys64` | Bash, Pacman, UCRT64 GCC/G++, Binutils, Make, pkg-config |
+| **Rust Standalone** | `Rust-Installer/` | `$HOME\.local\rust` | Rust stable GNU (`rustc`, `cargo`, `rustdoc`) linked to UCRT64 |
+| **Go Toolchain** | `Go-Installer/` | `$HOME\.local\go` | Go compiler (`go.exe`), `gofmt.exe`, `GOPATH` (`$HOME\go`) |
+| **Node.js LTS** | `Node-Installer/` | `$HOME\.local\node` | Node.js LTS (`node.exe`), `npm.cmd`, `npx.cmd`, `$HOME\.npm-global` |
+| **Python Portable** | `Python-Installer/` | `$HOME\.local\python` | Python 3 embeddable runtime, bootstrapped `pip`, `Scripts\` |
+
 ### 1. MSYS2 & UCRT64 GCC Toolchain (`MSYS2-Installer/`)
 A complete Unix-like build environment and native Windows C/C++ compiler toolchain targeting the modern Universal C Runtime (UCRT).
-- **Target Location:** `$HOME\msys64` (`C:\Users\<username>\msys64`)
-- **Key Features:**
-  - Automated download of official versioned SFX archive (`msys2-base-x86_64-YYYYMMDD.sfx.exe`).
-  - OpenPGP key retrieval from keyserver and strict validation against pinned primary key fingerprint (`0EBF782C5D53F7E5FB02A66746BD761F7A49B0EC`).
-  - Release SHA-256 checksum download from GitHub releases and cryptographic hash verification.
-  - Windows Authenticode digital signature inspection.
-  - Multi-pass `pacman -Syu` full system upgrade (handles core runtime updates cleanly).
-  - Complete `mingw-w64-ucrt-x86_64-toolchain` installation (`gcc`, `g++`, `ld`, `ar`, `ranlib`, `windres`, `objdump`, `strip`, `make`, `pkg-config`).
-  - Automated test compilation of native C and C++ programs verifying PE32+ x86-64 binary output and runtime execution.
-  - Leaves Windows system and user PATH untouched to prevent global environment pollution.
+- OpenPGP key retrieval from keyserver verified against pinned primary fingerprint `0EBF782C5D53F7E5FB02A66746BD761F7A49B0EC`.
+- Release SHA-256 and Authenticode validation.
+- Multi-pass `pacman -Syu` full system upgrade and native PE32+ test compilation.
 
 ### 2. Rust Standalone GNU Toolchain (`Rust-Installer/`)
 A self-contained native Rust toolchain (`x86_64-pc-windows-gnu`) configured to utilize MSYS2's UCRT64 GCC and GNU binutils linker.
-- **Target Location:** `$HOME\.local\rust` (`C:\Users\<username>\.local\rust`)
-- **Key Features:**
-  - Authenticated download of official `channel-rust-stable.toml` manifest using pinned Rust release key (`108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE`).
-  - Automatic extraction and installation of `rust-*-x86_64-pc-windows-gnu.tar.gz` via MSYS2 `tar`.
-  - Verification of `rustc`, `cargo`, and `rustdoc` host targets.
-  - Persistent **User PATH** configuration adding `$HOME\.local\rust\bin` and `$HOME\msys64\ucrt64\bin`.
-  - Automatic timestamped backup of previous user PATH to `$HOME\.local\rust\environment-backups/` before any changes.
-  - Automated end-to-end Cargo test project creation, debug/release build, and execution from native PowerShell.
+- Pinned Rust release key verification (`108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE`).
+- Persistent User PATH update with automated backup to `$HOME\.local\rust\environment-backups/`.
+- Automated native Cargo project test build and run.
+
+### 3. Go Toolchain (`Go-Installer/`)
+Official stable Go distribution extracted to user-local space.
+- Discovers and downloads latest stable release from `https://go.dev/dl/?mode=json`.
+- Cryptographic SHA-256 verification against the official manifest hash.
+- Configures `GOROOT` (`$HOME\.local\go`) and `GOPATH` (`$HOME\go`), prepends binary directories to User PATH with automated backup.
+- Native Go compile and execution verification (`go run` and `go build`).
+
+### 4. Node.js LTS Toolchain (`Node-Installer/`)
+Official Node.js Long Term Support distribution with a zero-admin global package configuration.
+- Discovers latest LTS release from `https://nodejs.org/dist/index.json`.
+- Cryptographic SHA-256 verification against official `SHASUMS256.txt`.
+- Configures user `.npmrc` to route global packages to `$HOME\.npm-global`, enabling `npm install -g <pkg>` without elevation.
+- Prepends `$HOME\.local\node` and `$HOME\.npm-global` to User PATH with automated backup.
+
+### 5. Python Portable Toolchain (`Python-Installer/`)
+Full-featured portable Python 3 runtime with standard site-packages and bootstrapped pip.
+- Discovers official 64-bit Windows embeddable package and verifies SHA-256 digest.
+- Automatically enables `import site` in `._pth` for full user `site-packages` compatibility.
+- Bootstraps `pip` and `setuptools` via `get-pip.py`.
+- Prepends `$HOME\.local\python` and `$HOME\.local\python\Scripts` to User PATH with automated backup.
+
+---
+
+## Unified Multi-Toolchain CLI Runner (`install-all.ps1`)
+
+The repository includes a top-level orchestrator script (`install-all.ps1`) featuring an interactive menu, detailed help manual, and batch execution flags.
+
+```powershell
+# Show interactive console menu
+.\install-all.ps1
+
+# Display toolchain inventory & installation status
+.\install-all.ps1 -List
+
+# Install all toolchains in one sequence
+.\install-all.ps1 -All
+
+# Selectively install specific toolchains
+.\install-all.ps1 -Go -Node -Python
+
+# Force clean reinstallation
+.\install-all.ps1 -All -Force
+
+# View detailed help manual and examples
+.\install-all.ps1 -Help
+```
 
 ---
 
@@ -47,9 +90,9 @@ A self-contained native Rust toolchain (`x86_64-pc-windows-gnu`) configured to u
 - **Operating System:** Windows 10 or Windows 11 (64-bit x86-64).
 - **Shell:** PowerShell 7.0 or later (`pwsh.exe`).
 - **Permissions:** Standard User (no administrator / UAC elevation required).
-- **Disk Space:** ~3 GB free space on an NTFS drive.
+- **Disk Space:** ~5 GB free space on an NTFS drive for all toolchains combined.
 - **Dependencies:**
-  - GnuPG (`gpg.exe`) available in `PATH` (e.g. from [Gpg4win](https://www.gpg4win.org/) or Git for Windows).
+  - GnuPG (`gpg.exe`) available in `PATH` (e.g. from Gpg4win or Git for Windows).
   - Active internet connection for release artifact downloads.
 - **Path Rules:** Installation paths must not contain spaces, non-ASCII characters, or reparse points (symlinks/junctions).
 
@@ -57,93 +100,35 @@ A self-contained native Rust toolchain (`x86_64-pc-windows-gnu`) configured to u
 
 ## Quickstart
 
-### Step 1: Install MSYS2 & UCRT64 GCC Toolchain
-Launch PowerShell 7 and run the master MSYS2 orchestrator:
+Run with execution policy bypass if scripts are restricted on your host:
 
 ```powershell
-cd MSYS2-Installer
-.\install-msys2.ps1
+pwsh -ExecutionPolicy Bypass -File .\install-all.ps1 -All
 ```
 
-*To perform a clean reinstall and overwrite an existing `$HOME\msys64`:*
-```powershell
-.\install-msys2.ps1 -Force
-```
-
-### Step 2: Install & Configure Rust Standalone Toolchain
-Once MSYS2 is installed, install Rust:
-
-```powershell
-cd ..\Rust-Installer
-.\install-rust.ps1
-```
-
-After installation completes, restart your terminal, CMD, or VS Code session so the updated User PATH takes effect.
+Once installation finishes, close and reopen your terminal, CMD, Windows Terminal, or VS Code sessions so they inherit the updated **User PATH**.
 
 ---
 
 ## Modular Step-by-Step Execution
 
-Each installer can be executed as a sequence of isolated, auditable steps.
+Each toolchain directory is completely modular and can be run independently:
 
-### MSYS2 Modular Steps
 ```powershell
-cd MSYS2-Installer
+# MSYS2 & UCRT64 GCC
+cd MSYS2-Installer; .\install-msys2.ps1
 
-# 1. Download SFX archive and signature
-.\01-install-msys2.ps1
+# Rust Standalone (requires MSYS2)
+cd ..\Rust-Installer; .\install-rust.ps1
 
-# 2. Import and validate official MSYS2 GPG signing key
-.\02-import-msys2-signing-key.ps1
+# Go
+cd ..\Go-Installer; .\install-go.ps1
 
-# 3. Verify SHA-256 hash, OpenPGP signature, and Authenticode
-.\03-verify-msys2-archive.ps1
+# Node.js LTS & NPM
+cd ..\Node-Installer; .\install-node.ps1
 
-# 4. Extract archive to $HOME\msys64 and initialize login shell
-.\04-install-msys2.ps1
-
-# 5. Perform system upgrade, install UCRT64 GCC toolchain, and run test builds
-.\05-install-gcc.ps1
-```
-
-### Rust Modular Steps
-```powershell
-cd Rust-Installer
-
-# 1. Authenticate manifest and download Rust GNU standalone archive
-.\01-download-rustup.ps1
-
-# 2. Extract and install Rust toolchain under $HOME\.local\rust
-.\02-install-rust-standalone.ps1
-
-# 3. Configure user PATH, backup previous settings, and run Cargo test project
-.\03-configure-rust-environment.ps1
-```
-
----
-
-## Launching & Verifying Environments
-
-### Opening the MSYS2 UCRT64 Shell
-To launch an interactive MSYS2 bash terminal in the UCRT64 environment:
-```powershell
-& "$HOME\msys64\msys2_shell.cmd" -ucrt64 -here
-```
-
-### Verifying from Standard PowerShell
-Once Rust Step 3 has updated the user PATH (or after a shell restart):
-```powershell
-rustc --version
-cargo --version
-gcc --version
-ld --version
-```
-
-### Testing a Native Cargo Project
-```powershell
-cargo new --bin hello-world
-cd hello-world
-cargo run
+# Python & Pip
+cd ..\Python-Installer; .\install-python.ps1
 ```
 
 ---
@@ -152,11 +137,11 @@ cargo run
 
 | Property | Implementation Detail |
 | :--- | :--- |
-| **Privilege Model** | Zero elevation required. All operations scoped strictly to `$HOME`. |
+| **Privilege Model** | Zero elevation required. All operations scoped strictly to `$HOME` (`$HOME\msys64` and `$HOME\.local\...`). |
 | **GPG Fingerprint Pinning** | MSYS2 (`0EBF782C5D53F7E5FB02A66746BD761F7A49B0EC`) and Rust (`108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE`). |
 | **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests, and Windows Authenticode signatures. |
 | **Fail-Fast Safety** | Any verification failure halts immediately before extraction or execution. Partial installs are cleaned up on error. |
-| **Environment Isolation** | User PATH changes are backed up with timestamped recovery files under `$HOME\.local\rust\environment-backups/`. System PATH is never touched. |
+| **Environment Isolation** | User PATH changes are backed up with timestamped recovery files under each toolchain's `environment-backups/` folder. System PATH is never touched. |
 
 ---
 
@@ -165,9 +150,9 @@ cargo run
 - **"File ... cannot be loaded because running scripts is disabled"**:
   Run PowerShell with execution policy bypass:
   ```powershell
-  powershell -ExecutionPolicy Bypass -File .\install-msys2.ps1
+  pwsh -ExecutionPolicy Bypass -File .\install-all.ps1 -All
   ```
 - **"GnuPG was not found in PATH"**:
   Ensure `gpg.exe` is installed and accessible in your PATH. If you have Git for Windows installed, it is typically located at `C:\Program Files\Git\usr\bin\gpg.exe`.
-- **"Installation stopped during Step 3"**:
-  Check your internet connectivity or firewall settings. Step 3 retrieves release metadata and SHA-256 checksums from GitHub releases.
+- **"Command not found after install"**:
+  Restart your terminal session to ensure the refreshed User PATH is loaded by your shell.

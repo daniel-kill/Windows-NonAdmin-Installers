@@ -5,7 +5,7 @@
 - **Primary Objective:** Provide automated, fully non-elevated (zero-administrator) developer toolchain installers for Windows 10/11 x86-64 using PowerShell 7, guaranteeing end-to-end cryptographic verification and zero pollution of machine-wide system state.
 - **Key Constraints:**
   - **Zero Elevation:** Under no circumstances should scripts invoke UAC, require Administrator group membership, or modify system-wide machine registries.
-  - **Local Scope:** All binaries, toolchains, caches, and configuration must reside strictly within `$HOME` (`$HOME\msys64`, `$HOME\.local\rust`).
+  - **Local Scope:** All binaries, toolchains, caches, and configuration must reside strictly within `$HOME` (`$HOME\msys64`, `$HOME\.local\...`).
   - **Strict Cryptographic Authentication:** Pinned OpenPGP primary key fingerprints, detached signature verification (`GOODSIG`/`VALIDSIG`), SHA-256 release checksum verification, and Authenticode signature checks prior to extraction.
   - **Environment Hygiene:** User PATH mutations must be backed up to timestamped restore files before alteration. Deduplicate PATH entries and avoid mutating the machine PATH.
   - **Fail-Fast & Cleanup:** Halt immediately upon any verification anomaly; clean up partial or corrupted extractions.
@@ -26,7 +26,7 @@
 
 ---
 
-## Phase 1 — Orchestration, Hardening & Documentation (Completed / Active Baseline)
+## Phase 1 — Orchestration, Hardening & Documentation (Completed)
 
 - [x] **MSYS2 Master Orchestrator (`install-msys2.ps1`):** Single-command runner with installation detection, progress reporting, fail-fast mechanics, and `-Force` reinstall flag.
 - [x] **Rust Master Orchestrator (`install-rust.ps1`):** Single-command runner for three-step Rust deployment with prerequisite checks and test validation.
@@ -40,22 +40,32 @@
 
 ---
 
-## Phase 2 — Toolchain Expansion (Planned)
+## Phase 2 — Toolchain Expansion (Completed)
 
-- [ ] **Non-Admin Go Toolchain Installer:**
-  - Automated download of official `go*.windows-amd64.zip` from `golang.org/dl`.
-  - Cryptographic SHA-256 verification against official release index.
-  - Extraction to `$HOME\.local\go`.
-  - User PATH and `GOPATH` / `GOBIN` persistent environment configuration.
-  - Native Go build and execution verification.
-- [ ] **Non-Admin Node.js / Runtime Installer:**
-  - Standalone extraction of Node.js x64 zip to `$HOME\.local\node` (or non-admin `fnm`).
-  - Verification of SHA-256 checksums signed by Node.js release keys.
-  - Configuration of user npm prefix to `$HOME\.npm-global`.
-- [ ] **Non-Admin Python Standalone Installer:**
-  - Portable Python extraction or Windows embeddable package bootstrap with pip support under `$HOME\.local\python`.
-- [ ] **Unified Multi-Toolchain CLI Runner:**
-  - Orchestrator script (`install-all.ps1` or interactive selector) to selectively provision toolchain combinations.
+- [x] **Non-Admin Go Toolchain Installer (`Go-Installer/`):**
+  - [x] Automated discovery and download of official `go*.windows-amd64.zip` from `https://go.dev/dl/?mode=json`.
+  - [x] Cryptographic SHA-256 verification against official manifest hash.
+  - [x] Non-elevated extraction to `$HOME\.local\go`.
+  - [x] Persistent User PATH and `GOPATH` (`$HOME\go`) / `GOBIN` (`$HOME\go\bin`) configuration with automated PATH backup.
+  - [x] Native Go build and execution verification (`go run` and `go build`).
+- [x] **Non-Admin Node.js / Runtime Installer (`Node-Installer/`):**
+  - [x] Automated discovery and download of official Node.js LTS x64 zip from `https://nodejs.org/dist/index.json`.
+  - [x] Cryptographic SHA-256 verification against official `SHASUMS256.txt`.
+  - [x] Non-elevated extraction to `$HOME\.local\node`.
+  - [x] Configuration of user-level npm global prefix to `$HOME\.npm-global` with User PATH updates and automated PATH backup.
+  - [x] Native Node.js and NPM execution verification (`node -e`).
+- [x] **Non-Admin Python Standalone Installer (`Python-Installer/`):**
+  - [x] Automated discovery and download of official 64-bit Python embeddable package and `get-pip.py`.
+  - [x] SHA-256 verification against official release table.
+  - [x] Extraction to `$HOME\.local\python` with `._pth` configuration enabling site-packages.
+  - [x] User-level pip and setuptools bootstrapping via `get-pip.py`.
+  - [x] User PATH persistent configuration and runtime verification.
+- [x] **Unified Multi-Toolchain CLI Runner (`install-all.ps1`):**
+  - [x] Full interactive console menu when run bare.
+  - [x] Detailed `-Help` manual with synopsis, flag definitions, and real-world examples.
+  - [x] Toolchain inventory inspection via `-List`.
+  - [x] Single-command batch installation with `-All` or selective flags (`-MSYS2`, `-Rust`, `-Go`, `-Node`, `-Python`).
+  - [x] Executive summary reporting with per-toolchain duration and status badges.
 **Exit:** Multi-language developer suite operable entirely from user space.
 
 ---
@@ -65,8 +75,11 @@
 - [ ] **Dedicated Uninstaller Scripts:**
   - `uninstall-msys2.ps1`: Safe removal of `$HOME\msys64` with optional backup of user dotfiles.
   - `uninstall-rust.ps1`: Clean deletion of `$HOME\.local\rust` and automated restoration of original user PATH from backup files.
+  - `uninstall-go.ps1`: Clean deletion of `$HOME\.local\go` and restoration of user PATH.
+  - `uninstall-node.ps1`: Clean deletion of `$HOME\.local\node` and restoration of user PATH.
+  - `uninstall-python.ps1`: Clean deletion of `$HOME\.local\python` and restoration of user PATH.
 - [ ] **Toolchain Upgrader / Integrity Auditor:**
-  - Check upstream for new MSYS2 and Rust releases; perform clean in-place updates.
+  - Check upstream for new MSYS2, Rust, Go, Node.js, and Python releases; perform clean in-place updates.
   - Integrity checker verifying installed binaries against checksums.
 - [ ] **Headless CI Regression Testing:**
   - Automated GitHub Actions workflow running on clean Windows Server runner to test all installation scripts end-to-end without administrative elevation.
