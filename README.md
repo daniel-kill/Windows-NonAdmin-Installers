@@ -16,10 +16,11 @@ This repository provides reproducible, fully non-elevated installers for modern 
 
 ## Supported Toolchains & AI CLIs
 
-### Foundation & Prerequisites
+### Foundation & Security Tools
 | Toolchain | Folder | Target Path | Key Components |
 | :--- | :--- | :--- | :--- |
 | **Gpg4win & GnuPG** | `Gpg4win-Installer/` | `$HOME\.local\gpg4win` | GnuPG core engine (`gpg.exe`, `gpgv.exe`, `dirmngr.exe`) & Kleopatra |
+| **KeePassXC & CLI** | `KeePassXC-Installer/` | `$HOME\.local\keepassxc` | KeePassXC GUI, `keepassxc-cli.exe`, `keepassxc-proxy.exe`, `.portable` mode |
 
 ### Core Developer Toolchains
 | Toolchain | Folder | Target Path | Key Components |
@@ -55,6 +56,9 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 
 # Install Gpg4win cryptographic foundation
 .\install-all.ps1 -Gpg4win
+
+# Install KeePassXC password manager & CLI
+.\install-all.ps1 -KeePassXC
 
 # Install all tools (Prerequisites + Core Toolchains + AI CLIs) in one sequence
 .\install-all.ps1 -All
@@ -104,8 +108,9 @@ Once installation finishes, close and reopen your terminal, CMD, Windows Termina
 Each directory is completely self-contained and modular:
 
 ```powershell
-# Foundation / Prerequisites
-cd Gpg4win-Installer; .\install-gpg4win.ps1
+# Foundation & Security Tools
+cd Gpg4win-Installer;   .\install-gpg4win.ps1
+cd ..\KeePassXC-Installer; .\install-keepassxc.ps1
 
 # Core Toolchains
 cd ..\MSYS2-Installer;   .\install-msys2.ps1
@@ -130,8 +135,8 @@ cd ..\Copilot-CLI;     .\install-copilot.ps1
 | Property | Implementation Detail |
 | :--- | :--- |
 | **Privilege Model** | Zero elevation required. All operations scoped strictly to `$HOME` (`$HOME\msys64`, `$HOME\.local\...`, `$HOME\.npm-global`). |
-| **GPG Fingerprint Pinning** | MSYS2 (`0EBF782C5D53F7E5FB02A66746BD761F7A49B0EC`) and Rust (`108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE`). |
-| **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests (Go, Node, Python, Ori, Gpg4win), SHA-512 (Antigravity), and Windows Authenticode signatures. |
+| **GPG Fingerprint Pinning** | MSYS2 (`0EBF782C5D53F7E5FB02A66746BD761F7A49B0EC`), Rust (`108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE`), and KeePassXC (`BF5A669F2272CF4324C1FDA8CFB4C2166397D0D2`). |
+| **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests (Go, Node, Python, Ori, Gpg4win, KeePassXC), SHA-512 (Antigravity), and Windows Authenticode signatures. |
 | **Fail-Fast Safety** | Any verification failure halts immediately before extraction or execution. Partial installs are cleaned up on error. |
 | **Environment Isolation** | User PATH changes are backed up with timestamped recovery files under each toolchain's `environment-backups/` folder. System/Machine PATH is never touched. |
 

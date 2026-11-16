@@ -3,6 +3,7 @@
 param(
     [switch]$All,
     [switch]$Gpg4win,
+    [switch]$KeePassXC,
     [switch]$MSYS2,
     [switch]$Rust,
     [switch]$Go,
@@ -31,14 +32,22 @@ Set-StrictMode -Version Latest
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $ToolchainRegistry = @(
-    # Prerequisite Dependencies
+    # Prerequisite Dependencies & Security Toolchains
     [pscustomobject]@{
         Id          = 'Gpg4win'
         Name        = 'Gpg4win & GnuPG'
         InstallDir  = Join-Path $HOME '.local\gpg4win'
         ScriptPath  = Join-Path $ScriptRoot 'Gpg4win-Installer\install-gpg4win.ps1'
         Description = 'Official GnuPG cryptographic engine (gpg.exe) & Gpg4win tools'
-        Category    = 'Prerequisites'
+        Category    = 'Security & Prerequisites'
+    }
+    [pscustomobject]@{
+        Id          = 'KeePassXC'
+        Name        = 'KeePassXC & CLI'
+        InstallDir  = Join-Path $HOME '.local\keepassxc'
+        ScriptPath  = Join-Path $ScriptRoot 'KeePassXC-Installer\install-keepassxc.ps1'
+        Description = 'KeePassXC password manager, keepassxc-cli, and portable vault'
+        Category    = 'Security & Prerequisites'
     }
     # Core Language Toolchains
     [pscustomobject]@{
@@ -140,7 +149,7 @@ function Show-Help {
     Write-Host @"
 
 SYNOPSIS:
-  install-all.ps1 [-All] [-CliTools] [-Gpg4win] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
+  install-all.ps1 [-All] [-CliTools] [-Gpg4win] [-KeePassXC] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
                   [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot]
                   [-Force] [-List] [-Help]
 
@@ -153,6 +162,7 @@ OPTIONS:
   -All             Install all available prerequisites, toolchains, and AI CLIs.
   -CliTools        Install only the 6 AI Developer CLIs (Cline, Hermes, Vibe, Ori, Antigravity, Copilot).
   -Gpg4win         Install Gpg4win and GnuPG (gpg.exe) into `$HOME\.local\gpg4win.
+  -KeePassXC       Install KeePassXC GUI and keepassxc-cli into `$HOME\.local\keepassxc.
   -MSYS2           Install MSYS2 with UCRT64 GCC, Make, and binutils into `$HOME\msys64.
   -Rust            Install Rust standalone GNU toolchain into `$HOME\.local\rust.
   -Go              Install official Go compiler & tools into `$HOME\.local\go.
@@ -236,6 +246,7 @@ elseif ($CliTools) {
 }
 else {
     if ($Gpg4win)     { $SelectedIds.Add('Gpg4win') }
+    if ($KeePassXC)   { $SelectedIds.Add('KeePassXC') }
     if ($MSYS2)       { $SelectedIds.Add('MSYS2') }
     if ($Rust)        { $SelectedIds.Add('Rust') }
     if ($Go)          { $SelectedIds.Add('Go') }
@@ -281,7 +292,7 @@ if ($SelectedIds.Count -eq 0) {
         Write-Host "  [H]  View Detailed Help & Flags" -ForegroundColor Cyan
         Write-Host "  [Q]  Quit" -ForegroundColor Red
         Write-Host
-        $Choice = Read-Host "Select an option (1-12, A, C, L, H, Q)"
+        $Choice = Read-Host "Select an option (1-13, A, C, L, H, Q)"
 
         if ($Choice -match '^\d+$' -and [int]$Choice -ge 1 -and [int]$Choice -le $ToolchainRegistry.Count) {
             $Index = [int]$Choice - 1

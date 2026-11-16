@@ -2,28 +2,29 @@
 
 ## Current State
 
-The repository is a fully unified non-administrator developer platform for Windows 10/11 x86-64, hosting **12 dedicated, cryptographically verified installers** and a top-level unified CLI orchestrator:
+The repository is a fully unified non-administrator developer platform for Windows 10/11 x86-64, hosting **13 dedicated, cryptographically verified installers** and a top-level unified CLI orchestrator:
 
-### 1. Foundation & Cryptographic Prerequisites
+### 1. Foundation & Security Tools
 1. `Gpg4win-Installer`: Provisions Gpg4win suite (`$HOME\.local\gpg4win\Gpg4win`) and official GnuPG core engine (`$HOME\.local\gpg4win\GnuPG\bin\gpg.exe`) silently without UAC prompts using `$env:__COMPAT_LAYER = 'RunAsInvoker'`.
+2. `KeePassXC-Installer`: Provisions KeePassXC desktop password manager (`$HOME\.local\keepassxc\KeePassXC.exe`) and `keepassxc-cli.exe` in portable mode with OpenPGP release signature verification and Authenticode validation.
 
 ### 2. Core Language Toolchains
-2. `MSYS2-Installer`: Provisions MSYS2, UCRT64 GCC/G++, binutils, Make, and pkg-config into `$HOME\msys64`.
-3. `Rust-Installer`: Provisions official Rust standalone GNU (`x86_64-pc-windows-gnu`) into `$HOME\.local\rust`.
-4. `Go-Installer`: Provisions official Go compiler and tools into `$HOME\.local\go`, setting `GOROOT` and `GOPATH` (`$HOME\go`).
-5. `Node-Installer`: Provisions Node.js LTS into `$HOME\.local\node` and configures user prefix at `$HOME\.npm-global`.
-6. `Python-Installer`: Provisions portable Python 3 into `$HOME\.local\python`, configures site-packages, and bootstraps `pip`.
+3. `MSYS2-Installer`: Provisions MSYS2, UCRT64 GCC/G++, binutils, Make, and pkg-config into `$HOME\msys64`.
+4. `Rust-Installer`: Provisions official Rust standalone GNU (`x86_64-pc-windows-gnu`) into `$HOME\.local\rust`.
+5. `Go-Installer`: Provisions official Go compiler and tools into `$HOME\.local\go`, setting `GOROOT` and `GOPATH` (`$HOME\go`).
+6. `Node-Installer`: Provisions Node.js LTS into `$HOME\.local\node` and configures user prefix at `$HOME\.npm-global`.
+7. `Python-Installer`: Provisions portable Python 3 into `$HOME\.local\python`, configures site-packages, and bootstraps `pip`.
 
 ### 3. AI Developer CLIs
-7. `Cline-CLI`: Autonomous coding agent CLI installed globally in user space (`$HOME\.npm-global`).
-8. `Hermes-CLI`: Nous Research Hermes Agent CLI in an isolated user virtualenv (`$HOME\.local\hermes`).
-9. `Vibe-CLI`: Mistral AI Vibe coding assistant CLI in an isolated user virtualenv (`$HOME\.local\vibe`).
-10. `Ori-CLI`: OpenRouter Ori CLI native Windows binary (`$HOME\.local\ori\bin\ori.exe`) verified via `SHA256SUMS`.
-11. `Antigravity-CLI`: Google Antigravity CLI native Windows binary (`$HOME\.local\antigravity\bin\agy.exe`) verified via SHA-512 manifest.
-12. `Copilot-CLI`: GitHub Copilot CLI (`@github/copilot`) installed in user space (`$HOME\.npm-global`).
+8. `Cline-CLI`: Autonomous coding agent CLI installed globally in user space (`$HOME\.npm-global`).
+9. `Hermes-CLI`: Nous Research Hermes Agent CLI in an isolated user virtualenv (`$HOME\.local\hermes`).
+10. `Vibe-CLI`: Mistral AI Vibe coding assistant CLI in an isolated user virtualenv (`$HOME\.local\vibe`).
+11. `Ori-CLI`: OpenRouter Ori CLI native Windows binary (`$HOME\.local\ori\bin\ori.exe`) verified via `SHA256SUMS`.
+12. `Antigravity-CLI`: Google Antigravity CLI native Windows binary (`$HOME\.local\antigravity\bin\agy.exe`) verified via SHA-512 manifest.
+13. `Copilot-CLI`: GitHub Copilot CLI (`@github/copilot`) installed in user space (`$HOME\.npm-global`).
 
 ### 4. Unified Orchestrator
-- `install-all.ps1`: Interactive console menu, `-List` status dashboard, detailed `-Help` manual, batch flags (`-All`, `-CliTools`, `-Gpg4win`, `-Force`), and dependency management.
+- `install-all.ps1`: Interactive console menu, `-List` status dashboard, detailed `-Help` manual, batch flags (`-All`, `-CliTools`, `-Gpg4win`, `-KeePassXC`, `-Force`), and dependency management.
 
 ---
 
@@ -31,7 +32,7 @@ The repository is a fully unified non-administrator developer platform for Windo
 
 - [x] **Phase 0 — Core Modular Implementations:** MSYS2 & Rust modular steps.
 - [x] **Phase 1 — Orchestrations & Documentation Baseline:** Master scripts and repository standards.
-- [x] **Phase 2 — Toolchain Expansion:** Go, Node.js, Python, Gpg4win, and `install-all.ps1`.
+- [x] **Phase 2 — Toolchain Expansion:** Go, Node.js, Python, Gpg4win, KeePassXC, and `install-all.ps1`.
 - [x] **Phase 2.5 — AI Developer CLIs:**
   - [x] `Cline-CLI/` (prereq check, npm user-global install, PATH config, `install-cline.ps1`, `START_HERE.md`).
   - [x] `Hermes-CLI/` (prereq check, isolated venv install, launcher shim, PATH config, `install-hermes.ps1`, `START_HERE.md`).
@@ -40,7 +41,8 @@ The repository is a fully unified non-administrator developer platform for Windo
   - [x] `Antigravity-CLI/` (manifest query, SHA-512 verification, binary install, PATH config, `install-antigravity.ps1`, `START_HERE.md`).
   - [x] `Copilot-CLI/` (prereq check, npm user-global install, PATH config, `install-copilot.ps1`, `START_HERE.md`).
   - [x] `Gpg4win-Installer/` (official download & digest/authenticode verification, silent non-admin install, PATH config, `install-gpg4win.ps1`, `START_HERE.md`).
-  - [x] `install-all.ps1` expanded with `-CliTools`, `-Gpg4win`, individual CLI flags, and interactive menu options.
+  - [x] `KeePassXC-Installer/` (official release discovery, SHA-256 & OpenPGP detached signature verification, portable extraction, Authenticode validation, PATH config, `install-keepassxc.ps1`, `START_HERE.md`).
+  - [x] `install-all.ps1` expanded with `-CliTools`, `-Gpg4win`, `-KeePassXC`, individual CLI flags, and interactive menu options.
   - [x] `README.md` and `ROADMAP.md` updated with full tables, quickstarts, and milestone tracking.
 
 ---
@@ -58,6 +60,7 @@ The repository is a fully unified non-administrator developer platform for Windo
 ## Blockers & Gotchas
 
 - **PowerShell Version:** Requires PowerShell 7 (`pwsh.exe`) with `-ExecutionPolicy Bypass`.
+- **KeePassXC Password Generation Parameter:** In `keepassxc-cli generate`, password length is passed via `-L <length>` (e.g. `-L 32`), as `-l` denotes the `--lower` flag for lowercase character inclusion.
 - **Node.js-based CLIs:** `Cline` and `Copilot` require Node.js. If missing, running `..\Node-Installer\install-node.ps1` resolves this prerequisite immediately.
 - **Python-based CLIs:** `Hermes` and `Vibe` require Python 3.10+. If missing, running `..\Python-Installer\install-python.ps1` resolves this prerequisite immediately.
 - **Environment Refresh:** Modifying the Windows Registry User `Path` takes effect immediately for new shells, but active terminal sessions must be restarted to inherit the refreshed PATH.

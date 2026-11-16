@@ -47,6 +47,12 @@
   - [x] Cryptographic SHA-256 verification and Authenticode inspection.
   - [x] Silent non-elevated installation into `$HOME\.local\gpg4win` via `RunAsInvoker`.
   - [x] Persistent User PATH update adding GnuPG (`gpg.exe`) and Gpg4win (`kleopatra.exe`).
+- [x] **Non-Admin KeePassXC & CLI Installer (`KeePassXC-Installer/`):**
+  - [x] Automated discovery of latest release from GitHub API, with sidecar `.DIGEST` and `.sig` downloads.
+  - [x] Cryptographic SHA-256 verification against official digest and OpenPGP detached signature authentication via pinned release key (`BF5A669F2272CF4324C1FDA8CFB4C2166397D0D2`).
+  - [x] Portable non-elevated deployment to `$HOME\.local\keepassxc` with `.portable` configuration marker.
+  - [x] Authenticode digital signature validation (`DroidMonkey Apps, LLC`) on `KeePassXC.exe` and `keepassxc-cli.exe`.
+  - [x] Persistent User PATH configuration and CLI execution/functional verification.
 - [x] **Non-Admin Go Toolchain Installer (`Go-Installer/`):**
   - [x] Automated discovery and download of official `go*.windows-amd64.zip` from `https://go.dev/dl/?mode=json`.
   - [x] Cryptographic SHA-256 verification against official manifest hash.
