@@ -49,8 +49,11 @@ The repository is a fully unified non-administrator developer platform for Windo
 32. `Uv-CLI`: Astral uv and uvx Python package & project manager (`$HOME\.local\uv\bin\uv.exe`) verified via official SHA-256 digest.
 33. `Herdr-CLI`: Herdr agent workspace runtime & terminal manager (`$HOME\.local\herdr\bin\hc.exe` / `herdr-core.exe`, ConPTY) verified via official release manifest.
 
-### 7. Unified Orchestrator
-- `install-all.ps1`: Interactive console menu, `-List` status dashboard, detailed `-Help` manual, batch flags (`-All`, `-CliTools`, individual flags for all 33 tools, `-Force`), and automatic dependency management.
+### 7. Unified Orchestration & Lifecycle Tooling
+- `install-all.ps1`: Unified multi-toolchain installer featuring interactive console menu, `-List` status dashboard, detailed `-Help` manual, batch flags (`-All`, `-CliTools`, individual flags for all 33 tools, `-Force`), and automatic dependency management.
+- `uninstall-all.ps1`: Unified uninstaller orchestrator for clean removal of tools, user data directories, download caches (`-KeepCache`), daemon termination (`gpgconf --kill all`, `herdr-core`), and automatic User PATH restoration with backups saved to `$HOME\.local\environment-backups\`.
+- `audit-tools.ps1`: Multi-point toolchain integrity and environment auditor inspecting binary existence on disk, CLI version command execution, Authenticode digital signatures (`GitHub, Inc.`, `DroidMonkey Apps, LLC`), and User PATH health. Supports `-Json` and `-Quiet`.
+- `update-all.ps1`: Toolchain upgrader and upstream release auditor monitoring GitHub Releases, npm registry, PyPI, Go API, Node.js distribution catalog, and Herdr manifests. Features comparative audit reporting (`-CheckOnly`), automated GitHub token detection, batch and selective in-place upgrade runners (`-All`, `-CliTools`, `-Force`), structured JSON output, and interactive TUI menu.
 
 ---
 
@@ -75,15 +78,20 @@ The repository is a fully unified non-administrator developer platform for Windo
   - [x] `Herdr-CLI/` (herdr-core & hc agent runtime with ConPTY, manifest SHA-256 check, PATH config, `install-herdr.ps1`).
   - [x] `install-all.ps1` expanded to 33 tools with 6 categories, `-List` updated, `-CliTools` expanded to 9 agent runtimes.
   - [x] `README.md` and `ROADMAP.md` updated with complete tool tables and Phase 2.85 tracking.
+- [x] **Phase 3 — Lifecycle Management & Upgrader Tooling (Part 1 & 2 Completed):**
+  - [x] Dedicated uninstaller scripts (`uninstall-*.ps1`) generated across all 33 individual tool directories.
+  - [x] Central uninstaller orchestrator (`uninstall-all.ps1`) supporting interactive TUI, batch flags (`-All`, `-CliTools`), selective flags, daemon shutdowns, and User PATH restoration.
+  - [x] Toolchain integrity auditor (`audit-tools.ps1`) verifying disk presence, CLI execution, Authenticode signatures, and PATH status with JSON output.
+  - [x] Toolchain upgrader & upstream auditor (`update-all.ps1`) monitoring upstream release feeds, dry-run auditing (`-CheckOnly`), rate-limit mitigation via token auto-detection, and in-place upgrade runner.
+  - [x] Documentation updated in `README.md`, `ROADMAP.md`, and `HANDOFF.md`.
 
 ---
 
 ## In Progress & Immediate Next Steps
 
-1. **Remote Sync:** Commit `03944a8` pushed to `origin/master` (33 tools deployed and verified).
-2. **Phase 3 Scoping:**
-   - Develop dedicated uninstallation scripts (`uninstall-*.ps1`) for clean rollbacks and PATH restoration.
-   - Design automated headless CI regression test workflow.
+1. **Commit Signing:** Create GPG-signed commit using `daniel@danielkill.online` (`E453F9AEC380D33E4BA7FAC69B542AA270F867E5`).
+2. **User Authorization:** Request user confirmation before pushing to remote (`origin/master`).
+3. **Phase 3 Next Step:** Design headless CI regression test workflow (GitHub Actions) for clean non-admin validation.
 
 ---
 

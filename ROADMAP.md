@@ -218,12 +218,14 @@
 
 ---
 
-## Phase 3 — Lifecycle Management & CI Automation (Future)
+## Phase 3 — Lifecycle Management & CI Automation (In Progress)
 
-- [ ] **Dedicated Uninstaller Scripts:**
-  - `uninstall-*.ps1` for clean removal and automated user PATH restoration.
-- [ ] **Toolchain Upgrader / Integrity Auditor:**
-  - Upstream release checkers and clean in-place update orchestrators.
+- [x] **Dedicated Uninstaller Scripts:**
+  - [x] Implemented modular `uninstall-*.ps1` across all 33 tool directories.
+  - [x] Central orchestrator `uninstall-all.ps1` with batch (`-All`, `-CliTools`), selective flags, daemon termination (`gpgconf --kill all`, `herdr-core`), download cache purge (`-KeepCache`), and automated User PATH restoration with backups stored in `$HOME\.local\environment-backups\`.
+- [x] **Toolchain Upgrader / Integrity Auditor:**
+  - [x] `audit-tools.ps1`: Comprehensive 33-tool integrity scanner checking binary existence, CLI execution, Authenticode digital signatures, and User PATH health. Emits structured JSON (`-Json`) or colored console tables.
+  - [x] `update-all.ps1`: Automated upstream release monitoring across GitHub Releases, npm registry, PyPI, Go API, Node.js distribution catalog, and Herdr manifests. Features dry-run auditing (`-CheckOnly`), automated rate-limit mitigation via token auto-detection, batch and selective in-place upgrade runners (`-All`, `-CliTools`, `-Force`), structured JSON output, and interactive TUI menu.
 - [ ] **Headless CI Regression Testing:**
   - Automated GitHub Actions workflow running on clean Windows Server runner to test all installation scripts end-to-end without administrative elevation.
 **Exit:** Self-updating, self-healing, automated non-admin developer platform.

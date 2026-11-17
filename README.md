@@ -125,6 +125,78 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 
 ---
 
+## Lifecycle Management: Uninstallation, Auditing & Upgrades
+
+Phase 3 introduces comprehensive lifecycle management tooling for the 33 non-admin developer toolchains.
+
+### 1. Unified Uninstaller Orchestrator (`uninstall-all.ps1`)
+
+Safely and cleanly removes installed toolchains, wipes user directories (`$HOME\.local\<tool>`, `$HOME\msys64`), cleans download caches (`$HOME\Downloads\<tool>`), terminates background daemons (e.g. `gpgconf --kill all`, `herdr-core`), and automatically purges tool directories from User PATH while storing timestamped backups under `$HOME\.local\environment-backups\`.
+
+```powershell
+# Interactive uninstaller menu
+.\uninstall-all.ps1
+
+# List installed status across all 33 tools
+.\uninstall-all.ps1 -List
+
+# Cleanly uninstall a specific tool (e.g., KeePassXC)
+.\uninstall-all.ps1 -KeePassXC
+
+# Uninstall all 9 AI Developer CLIs while retaining download installers
+.\uninstall-all.ps1 -CliTools -KeepCache
+
+# Complete clean removal of all 33 tools
+.\uninstall-all.ps1 -All
+```
+
+Each tool directory also contains an isolated, modular `uninstall-<tool>.ps1` (e.g., `Gpg4win-Installer/uninstall-gpg4win.ps1`, `VSCode-Installer/uninstall-vscode.ps1`).
+
+---
+
+### 2. Toolchain Integrity Auditor (`audit-tools.ps1`)
+
+Scans all 33 toolchains, verifying binary presence on disk, CLI version command execution, Authenticode digital signatures (`GitHub, Inc.`, `DroidMonkey Apps, LLC`, etc.), and User PATH configuration:
+
+```powershell
+# Run full human-readable integrity report
+.\audit-tools.ps1
+
+# Output structured JSON for automation or CI pipelines
+.\audit-tools.ps1 -Json
+```
+
+---
+
+### 3. Upstream Release Auditor & Upgrader (`update-all.ps1`)
+
+Monitors upstream release feeds (GitHub Releases, npm registry, PyPI, Go dev API, Node.js distribution catalog, Herdr manifest), compares installed versions against available releases, and orchestrates clean in-place updates. Automatically leverages `$env:GITHUB_TOKEN` or `gh auth token` to avoid rate limits.
+
+```powershell
+# Interactive update menu
+.\update-all.ps1
+
+# Audit only (dry-run comparison table of installed vs upstream)
+.\update-all.ps1 -CheckOnly
+
+# Audit only AI Developer CLIs
+.\update-all.ps1 -CliTools -CheckOnly
+
+# Upgrade all outdated tools
+.\update-all.ps1 -All
+
+# Upgrade only outdated AI Developer CLIs
+.\update-all.ps1 -CliTools
+
+# Force re-install / upgrade of a specific tool
+.\update-all.ps1 -Gh -Force
+
+# Output audit data as structured JSON
+.\update-all.ps1 -Json
+```
+
+---
+
 ## Prerequisites & Requirements
 
 - **Operating System:** Windows 10 or Windows 11 (64-bit x86-64).
