@@ -37,6 +37,9 @@ param(
     [switch]$Claude,
     [switch]$Aider,
     [switch]$Herdr,
+    [switch]$Chocolatey,
+    [switch]$Scoop,
+    [switch]$PackageManagers,
     [switch]$Force,
     [switch]$Json,
     [switch]$List,
@@ -65,7 +68,7 @@ if ($GitHubToken) {
 $DefaultWebHeaders = @{ 'User-Agent' = 'NonAdmin-Toolchain-Upgrader/1.0' }
 
 # -----------------------------------------------------------------------------
-# Toolchain Registry (33 tools across 6 categories)
+# Toolchain Registry (35 tools across 7 categories)
 # -----------------------------------------------------------------------------
 $ToolchainRegistry = @(
     # Security & Prerequisites
@@ -475,6 +478,31 @@ $ToolchainRegistry = @(
         UpstreamType   = 'Herdr'
         UpstreamTarget = 'https://releases.herdr.dev/core/latest.json'
     }
+    # Package Managers
+    [pscustomobject]@{
+        Id             = 'Chocolatey'
+        Name           = 'Chocolatey Non-Admin'
+        Category       = 'Package Managers'
+        InstallDir     = Join-Path $HOME '.local\chocolatey'
+        ScriptPath     = Join-Path $ScriptRoot 'Chocolatey-Installer\install-chocolatey.ps1'
+        ExePath        = Join-Path $HOME '.local\chocolatey\bin\choco.exe'
+        VersionArgs    = '--version'
+        VersionRegex   = '(?im)^([0-9\.]+)'
+        UpstreamType   = 'GitHub'
+        UpstreamTarget = 'chocolatey/choco'
+    }
+    [pscustomobject]@{
+        Id             = 'Scoop'
+        Name           = 'Scoop Package Manager'
+        Category       = 'Package Managers'
+        InstallDir     = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $HOME 'scoop' }
+        ScriptPath     = Join-Path $ScriptRoot 'Scoop-Installer\install-scoop.ps1'
+        ExePath        = if ($env:SCOOP) { Join-Path $env:SCOOP 'shims\scoop.cmd' } else { Join-Path $HOME 'scoop\shims\scoop.cmd' }
+        VersionArgs    = '--version'
+        VersionRegex   = '(?im)^v?([0-9\.]+)'
+        UpstreamType   = 'GitHub'
+        UpstreamTarget = 'ScoopInstaller/Scoop'
+    }
 )
 
 # -----------------------------------------------------------------------------
@@ -487,14 +515,15 @@ function Show-Help {
 ==========================================================================================
 
 SYNOPSIS:
-  update-all.ps1 [-CheckOnly] [-All] [-CliTools] [-Force] [-Json] [-List] [-Help]
+  update-all.ps1 [-CheckOnly] [-All] [-CliTools] [-PackageManagers] [-Force] [-Json] [-List] [-Help]
                  [-Gpg4win] [-KeePassXC] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
                  [-Bun] [-Deno] [-Uv] [-Cmake] [-Ninja]
                  [-Git] [-Gh] [-SevenZip] [-Ripgrep] [-Fd] [-Jq] [-Fzf] [-Bat] [-Delta] [-Eza] [-Cloudflared]
                  [-VSCode] [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider] [-Herdr]
+                 [-Chocolatey] [-Scoop]
 
 DESCRIPTION:
-  Monitors, audits, and upgrades 33 user-space developer toolchains, utilities,
+  Monitors, audits, and upgrades 35 user-space developer toolchains, utilities,
   editors, and AI developer CLIs without requiring administrative privileges.
   Audits local installations against upstream release feeds (GitHub, Npm, PyPI, Go, Node, Herdr).
 
@@ -502,6 +531,7 @@ OPTIONS:
   -CheckOnly        Audit upstream releases and display a comparative report without upgrading.
   -All              Upgrade all installed tools that are outdated.
   -CliTools         Target only the 9 AI Developer CLIs and agent runtimes.
+  -PackageManagers  Target Chocolatey and Scoop package managers.
   -Force            Force in-place reinstall/upgrade even if installed version matches upstream.
   -Json             Output status and version comparisons as structured JSON.
   -List             List all tracked toolchains and their upstream verification sources.
@@ -509,7 +539,7 @@ OPTIONS:
   -Help             Show this manual.
 
 EXAMPLES:
-  # Check for updates across all 33 tools (dry-run audit):
+  # Check for updates across all 35 tools (dry-run audit):
   pwsh update-all.ps1 -CheckOnly
 
   # Upgrade all outdated tools:
@@ -531,7 +561,7 @@ if ($Help) {
 if ($List) {
     Write-Host
     Write-Host "==========================================================================================" -ForegroundColor Cyan
-    Write-Host " REGISTERED TOOLCHAINS & UPSTREAM SOURCES (33 Tools)" -ForegroundColor Cyan
+    Write-Host " REGISTERED TOOLCHAINS & UPSTREAM SOURCES (35 Tools)" -ForegroundColor Cyan
     Write-Host "==========================================================================================" -ForegroundColor Cyan
     $ToolchainRegistry | Format-Table -Property Id, Category, Name, UpstreamType, UpstreamTarget
     exit 0
@@ -749,7 +779,8 @@ $ExplicitFlags = @(
     'Gpg4win', 'KeePassXC', 'MSYS2', 'Rust', 'Go', 'Node', 'Python',
     'Bun', 'Deno', 'Uv', 'Cmake', 'Ninja',
     'Git', 'Gh', 'SevenZip', 'Ripgrep', 'Fd', 'Jq', 'Fzf', 'Bat', 'Delta', 'Eza', 'Cloudflared',
-    'VSCode', 'Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr'
+    'VSCode', 'Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr',
+    'Chocolatey', 'Scoop'
 )
 
 $SelectedToolIds = [Collections.Generic.List[string]]::new()
@@ -764,6 +795,15 @@ foreach ($Flag in $ExplicitFlags) {
 if ($CliTools) {
     $CliIds = @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr')
     foreach ($id in $CliIds) {
+        if (-not $SelectedToolIds.Contains($id)) {
+            $SelectedToolIds.Add($id)
+        }
+    }
+}
+
+if ($PackageManagers) {
+    $PkgIds = @('Chocolatey', 'Scoop')
+    foreach ($id in $PkgIds) {
         if (-not $SelectedToolIds.Contains($id)) {
             $SelectedToolIds.Add($id)
         }
@@ -787,7 +827,7 @@ if ($null -eq $TargetTools -and -not $CheckOnly -and -not $NonInteractive) {
     Write-Host "==========================================================================================" -ForegroundColor Cyan
     Write-Host " NON-ADMIN TOOLCHAIN UPGRADER & UPSTREAM AUDITOR — INTERACTIVE MENU" -ForegroundColor Cyan
     Write-Host "==========================================================================================" -ForegroundColor Cyan
-    Write-Host " 1) Check for Updates (Audit all 33 tools against upstream feeds)"
+    Write-Host " 1) Check for Updates (Audit all 35 tools against upstream feeds)"
     Write-Host " 2) Check Updates for AI Developer CLIs only"
     Write-Host " 3) Upgrade All Outdated Tools (Auto-detect)"
     Write-Host " 4) Upgrade Outdated AI Developer CLIs"

@@ -218,14 +218,35 @@
 
 ---
 
+## Phase 2.95 — User-Space Package Managers & Shims Expansion (Completed)
+
+- [x] **Non-Admin Chocolatey Package Manager Installer (`Chocolatey-Installer/`):**
+  - [x] Automated discovery and download of official `chocolatey.*.nupkg` via GitHub release API with baseline fallback.
+  - [x] Cryptographic SHA-256 verification and fast extraction cascade (`tar` / `7z`) into `$HOME\.local\chocolatey`.
+  - [x] User-scoped environment variable `ChocolateyInstall` configuration with automated User PATH update.
+  - [x] Modular script suite (`01-download`, `02-install`, `03-configure`, `install-chocolatey`, `uninstall-chocolatey`, `START_HERE.md`).
+- [x] **Non-Admin Scoop Package Manager Installer (`Scoop-Installer/`):**
+  - [x] Automated discovery and download of official `Scoop-*.zip` and `install.ps1`.
+  - [x] Cryptographic SHA-256 integrity verification.
+  - [x] Clean extraction to `$HOME\scoop\apps\scoop\current` and custom non-admin shim generation (`scoop.cmd`, `scoop.ps1`, `scoop`).
+  - [x] User-scoped environment variable `SCOOP` configuration with automated User PATH update.
+  - [x] Modular script suite (`01-download`, `02-install`, `03-configure`, `install-scoop`, `uninstall-scoop`, `START_HERE.md`).
+- [x] **Unified Multi-Toolchain CLI Runner (`install-all.ps1`) Expansion:**
+  - [x] Expanded toolchain inventory to **35 tools** across 7 logical categories.
+  - [x] Added dedicated flags: `-Chocolatey`, `-Scoop`, `-PackageManagers`.
+  - [x] Updated interactive console menu, `-List` dashboard, and help manual.
+**Exit:** Zero-admin package managers (Chocolatey and Scoop) fully operable from user space with persistent shims and environment variables.
+
+---
+
 ## Phase 3 — Lifecycle Management & CI Automation (In Progress)
 
 - [x] **Dedicated Uninstaller Scripts:**
-  - [x] Implemented modular `uninstall-*.ps1` across all 33 tool directories.
-  - [x] Central orchestrator `uninstall-all.ps1` with batch (`-All`, `-CliTools`), selective flags, daemon termination (`gpgconf --kill all`, `herdr-core`), download cache purge (`-KeepCache`), and automated User PATH restoration with backups stored in `$HOME\.local\environment-backups\`.
+  - [x] Implemented modular `uninstall-*.ps1` across all 35 tool directories.
+  - [x] Central orchestrator `uninstall-all.ps1` with batch (`-All`, `-CliTools`, `-PackageManagers`), selective flags, daemon termination (`gpgconf --kill all`, `herdr-core`), download cache purge (`-KeepCache`), and automated User PATH restoration with backups stored in `$HOME\.local\environment-backups\`.
 - [x] **Toolchain Upgrader / Integrity Auditor:**
-  - [x] `audit-tools.ps1`: Comprehensive 33-tool integrity scanner checking binary existence, CLI execution, Authenticode digital signatures, and User PATH health. Emits structured JSON (`-Json`) or colored console tables.
-  - [x] `update-all.ps1`: Automated upstream release monitoring across GitHub Releases, npm registry, PyPI, Go API, Node.js distribution catalog, and Herdr manifests. Features dry-run auditing (`-CheckOnly`), automated rate-limit mitigation via token auto-detection, batch and selective in-place upgrade runners (`-All`, `-CliTools`, `-Force`), structured JSON output, and interactive TUI menu.
+  - [x] `audit-tools.ps1`: Comprehensive 35-tool integrity scanner checking binary existence, CLI execution, Authenticode digital signatures, and User PATH health. Emits structured JSON (`-Json`) or colored console tables.
+  - [x] `update-all.ps1`: Automated upstream release monitoring across GitHub Releases, npm registry, PyPI, Go API, Node.js distribution catalog, and Herdr manifests (covering all 35 tools). Features dry-run auditing (`-CheckOnly`), automated rate-limit mitigation via token auto-detection, batch and selective in-place upgrade runners (`-All`, `-CliTools`, `-PackageManagers`, `-Force`), structured JSON output, and interactive TUI menu.
 - [ ] **Headless CI Regression Testing:**
   - Automated GitHub Actions workflow running on clean Windows Server runner to test all installation scripts end-to-end without administrative elevation.
 **Exit:** Self-updating, self-healing, automated non-admin developer platform.

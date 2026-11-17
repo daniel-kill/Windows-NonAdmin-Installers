@@ -35,6 +35,9 @@ param(
     [switch]$Claude,
     [switch]$Aider,
     [switch]$Herdr,
+    [switch]$Chocolatey,
+    [switch]$Scoop,
+    [switch]$PackageManagers,
     [switch]$CliTools,
     [switch]$Force,
     [switch]$List,
@@ -322,6 +325,23 @@ $ToolchainRegistry = @(
         Description = 'Persistent terminal runtime and agent workspace manager (hc.exe / herdr-core)'
         Category    = 'AI CLI'
     }
+    # Package Managers
+    [pscustomobject]@{
+        Id          = 'Chocolatey'
+        Name        = 'Chocolatey Non-Admin'
+        InstallDir  = Join-Path $HOME '.local\chocolatey'
+        ScriptPath  = Join-Path $ScriptRoot 'Chocolatey-Installer\install-chocolatey.ps1'
+        Description = 'Chocolatey user-local package manager for portable software'
+        Category    = 'Package Managers'
+    }
+    [pscustomobject]@{
+        Id          = 'Scoop'
+        Name        = 'Scoop Package Manager'
+        InstallDir  = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $HOME 'scoop' }
+        ScriptPath  = Join-Path $ScriptRoot 'Scoop-Installer\install-scoop.ps1'
+        Description = 'Scoop user-mode command-line installer and bucket manager'
+        Category    = 'Package Managers'
+    }
 )
 
 function Show-Help {
@@ -332,10 +352,11 @@ function Show-Help {
     Write-Host @"
 
 SYNOPSIS:
-  install-all.ps1 [-All] [-CliTools] [-Gpg4win] [-KeePassXC] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
+  install-all.ps1 [-All] [-CliTools] [-PackageManagers] [-Gpg4win] [-KeePassXC] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
                   [-Bun] [-Deno] [-Uv] [-Cmake] [-Ninja]
                   [-Git] [-Gh] [-SevenZip] [-Ripgrep] [-Fd] [-Jq] [-Fzf] [-Bat] [-Delta] [-Eza] [-Cloudflared]
                   [-VSCode] [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider] [-Herdr]
+                  [-Chocolatey] [-Scoop]
                   [-Force] [-List] [-Help]
 
 DESCRIPTION:
@@ -346,6 +367,7 @@ DESCRIPTION:
 OPTIONS:
   -All             Install all available prerequisites, toolchains, utilities, and AI CLIs.
   -CliTools        Install only the 9 AI Developer CLIs & agent runtimes (Cline, Hermes, Vibe, Ori, Antigravity, Copilot, Claude, Aider, Herdr).
+  -PackageManagers Install both Chocolatey and Scoop package managers.
   -Gpg4win         Install Gpg4win and GnuPG (gpg.exe) into `$HOME\.local\gpg4win.
   -KeePassXC       Install KeePassXC GUI and keepassxc-cli into `$HOME\.local\keepassxc.
   -MSYS2           Install MSYS2 with UCRT64 GCC, Make, and binutils into `$HOME\msys64.
@@ -379,6 +401,8 @@ OPTIONS:
   -Claude          Install Anthropic Claude Code CLI into `$HOME\.npm-global.
   -Aider           Install Aider terminal pair programmer into `$HOME\.local\aider.
   -Herdr           Install Herdr agent runtime and terminal manager (hc) into `$HOME\.local\herdr.
+  -Chocolatey      Install Chocolatey non-admin package manager into `$HOME\.local\chocolatey.
+  -Scoop           Install Scoop package manager into `$HOME\scoop.
   -Force           Force re-installation (removes existing directory before reinstalling).
   -List            Display the current installation status of all toolchains.
   -Help            Show this detailed help manual and usage examples.
@@ -483,6 +507,12 @@ else {
     if ($Claude)      { $SelectedIds.Add('Claude') }
     if ($Aider)       { $SelectedIds.Add('Aider') }
     if ($Herdr)       { $SelectedIds.Add('Herdr') }
+    if ($Chocolatey)  { $SelectedIds.Add('Chocolatey') }
+    if ($Scoop)       { $SelectedIds.Add('Scoop') }
+    if ($PackageManagers) {
+        $SelectedIds.Add('Chocolatey')
+        $SelectedIds.Add('Scoop')
+    }
 }
 
 # Interactive Menu when run bare and not in headless non-interactive mode

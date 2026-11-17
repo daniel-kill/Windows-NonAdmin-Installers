@@ -73,6 +73,12 @@ This repository provides reproducible, fully non-elevated installers for modern 
 | **Astral uv** | `Uv-CLI/` | Native x64 Binary | `$HOME\.local\uv\bin\uv.exe` | [docs.astral.sh/uv](https://docs.astral.sh/uv/) |
 | **Herdr Runtime (hc)** | `Herdr-CLI/` | Native x64 Binary | `$HOME\.local\herdr\bin\hc.exe` | [herdr.dev](https://herdr.dev/) |
 
+### Package Managers & User-Space Shims
+| Toolchain | Folder | Target Path | Key Components |
+| :--- | :--- | :--- | :--- |
+| **Chocolatey Non-Admin** | `Chocolatey-Installer/` | `$HOME\.local\chocolatey` | Official Chocolatey CLI (`choco.exe`), `bin\`, `helpers\`, `ChocolateyInstall` user variable |
+| **Scoop** | `Scoop-Installer/` | `$HOME\scoop` | Scoop core engine (`scoop.ps1`), shims (`scoop.cmd`, `scoop.ps1`, `scoop`), `SCOOP` user variable |
+
 ---
 
 ## Unified Multi-Toolchain CLI Runner (`install-all.ps1`)
@@ -83,7 +89,7 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 # Show interactive console menu
 .\install-all.ps1
 
-# Display complete toolchain & CLI inventory status (33 managed tools)
+# Display complete toolchain & CLI inventory status (35 managed tools)
 .\install-all.ps1 -List
 
 # Install Gpg4win cryptographic foundation
@@ -97,6 +103,11 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 
 # Install only the 9 AI Developer CLIs & agent runtimes
 .\install-all.ps1 -CliTools
+
+# Install user-space package managers
+.\install-all.ps1 -PackageManagers
+# or selectively:
+.\install-all.ps1 -Chocolatey -Scoop
 
 # Install native build systems
 .\install-all.ps1 -Cmake -Ninja
@@ -114,7 +125,7 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 .\install-all.ps1 -Uv -Herdr
 
 # Selectively install specific tools
-.\install-all.ps1 -Gpg4win -Git -Gh -VSCode -Claude -Uv -Herdr
+.\install-all.ps1 -Gpg4win -Git -Gh -VSCode -Claude -Uv -Herdr -Chocolatey -Scoop
 
 # Force clean reinstallation
 .\install-all.ps1 -All -Force
@@ -127,7 +138,7 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 
 ## Lifecycle Management: Uninstallation, Auditing & Upgrades
 
-Phase 3 introduces comprehensive lifecycle management tooling for the 33 non-admin developer toolchains.
+Phase 3 introduces comprehensive lifecycle management tooling for the 35 non-admin developer toolchains.
 
 ### 1. Unified Uninstaller Orchestrator (`uninstall-all.ps1`)
 
@@ -137,7 +148,7 @@ Safely and cleanly removes installed toolchains, wipes user directories (`$HOME\
 # Interactive uninstaller menu
 .\uninstall-all.ps1
 
-# List installed status across all 33 tools
+# List installed status across all 35 tools
 .\uninstall-all.ps1 -List
 
 # Cleanly uninstall a specific tool (e.g., KeePassXC)
@@ -146,7 +157,10 @@ Safely and cleanly removes installed toolchains, wipes user directories (`$HOME\
 # Uninstall all 9 AI Developer CLIs while retaining download installers
 .\uninstall-all.ps1 -CliTools -KeepCache
 
-# Complete clean removal of all 33 tools
+# Uninstall package managers
+.\uninstall-all.ps1 -PackageManagers
+
+# Complete clean removal of all 35 tools
 .\uninstall-all.ps1 -All
 ```
 
@@ -156,7 +170,7 @@ Each tool directory also contains an isolated, modular `uninstall-<tool>.ps1` (e
 
 ### 2. Toolchain Integrity Auditor (`audit-tools.ps1`)
 
-Scans all 33 toolchains, verifying binary presence on disk, CLI version command execution, Authenticode digital signatures (`GitHub, Inc.`, `DroidMonkey Apps, LLC`, etc.), and User PATH configuration:
+Scans all 35 toolchains, verifying binary presence on disk, CLI version command execution, Authenticode digital signatures (`GitHub, Inc.`, `DroidMonkey Apps, LLC`, etc.), and User PATH configuration:
 
 ```powershell
 # Run full human-readable integrity report
@@ -271,6 +285,10 @@ cd ..\Claude-CLI;            .\install-claude.ps1
 cd ..\Aider-CLI;             .\install-aider.ps1
 cd ..\Uv-CLI;                .\install-uv.ps1
 cd ..\Herdr-CLI;             .\install-herdr.ps1
+
+# Package Managers & User-Space Shims
+cd ..\Chocolatey-Installer;  .\install-chocolatey.ps1
+cd ..\Scoop-Installer;       .\install-scoop.ps1
 ```
 
 ---
@@ -279,9 +297,9 @@ cd ..\Herdr-CLI;             .\install-herdr.ps1
 
 | Property | Implementation Detail |
 | :--- | :--- |
-| **Privilege Model** | Zero elevation required. All operations scoped strictly to `$HOME` (`$HOME\msys64`, `$HOME\.local\...`, `$HOME\.npm-global`). |
+| **Privilege Model** | Zero elevation required. All operations scoped strictly to `$HOME` (`$HOME\msys64`, `$HOME\.local\...`, `$HOME\.npm-global`, `$HOME\scoop`). |
 | **GPG Fingerprint Pinning** | MSYS2 (`0EBF782C5D53F7E5FB02A66746BD761F7A49B0EC`), Rust (`108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE`), and KeePassXC (`BF5A669F2272CF4324C1FDA8CFB4C2166397D0D2`). |
-| **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests (Go, Node, Python, Bun, Deno, CMake, uv, Herdr, cloudflared, fzf, bat, delta, eza, Ori, Gpg4win, KeePassXC, GitHub CLI, ripgrep, fd, jq, PortableGit, 7-Zip), SHA-512 (Antigravity), and Windows Authenticode signatures (`GitHub, Inc.`, `Microsoft Corporation`, `DroidMonkey Apps, LLC`, etc.). |
+| **Integrity Verification** | Detached OpenPGP signatures (`GOODSIG`/`VALIDSIG`), SHA-256 release digests (Go, Node, Python, Bun, Deno, CMake, uv, Herdr, cloudflared, fzf, bat, delta, eza, Ori, Gpg4win, KeePassXC, GitHub CLI, ripgrep, fd, jq, PortableGit, 7-Zip, Chocolatey, Scoop), SHA-512 (Antigravity), and Windows Authenticode signatures (`GitHub, Inc.`, `Microsoft Corporation`, `DroidMonkey Apps, LLC`, etc.). |
 | **Zero-Registry Isolation** | Portable modes activated where available (e.g. VS Code isolated `data/` directory, KeePassXC `.portable` flag) preventing `%APPDATA%` and registry pollution. |
 | **Fail-Fast Safety** | Any verification failure halts immediately before extraction or execution. Partial installs are cleaned up on error. |
 | **Environment Isolation** | User PATH changes are backed up with timestamped recovery files under each toolchain's `environment-backups/` folder. System/Machine PATH is never touched. |

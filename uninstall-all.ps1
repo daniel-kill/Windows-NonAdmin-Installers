@@ -35,6 +35,9 @@ param(
     [switch]$Claude,
     [switch]$Aider,
     [switch]$Herdr,
+    [switch]$Chocolatey,
+    [switch]$Scoop,
+    [switch]$PackageManagers,
     [switch]$CliTools,
     [switch]$KeepCache,
     [switch]$List,
@@ -96,6 +99,9 @@ $ToolchainRegistry = @(
     [pscustomobject]@{ Id = 'Aider';      Name = 'Aider CLI';                  InstallDir = Join-Path $HOME '.local\aider';       ScriptPath = Join-Path $ScriptRoot 'Aider-CLI\uninstall-aider.ps1';                 Category = 'AI CLI' }
     [pscustomobject]@{ Id = 'Uv';         Name = 'uv (Python manager)';        InstallDir = Join-Path $HOME '.local\uv';          ScriptPath = Join-Path $ScriptRoot 'Uv-CLI\uninstall-uv.ps1';                       Category = 'AI CLI' }
     [pscustomobject]@{ Id = 'Herdr';      Name = 'Herdr Agent Runtime (hc)';   InstallDir = Join-Path $HOME '.local\herdr';       ScriptPath = Join-Path $ScriptRoot 'Herdr-CLI\uninstall-herdr.ps1';                 Category = 'AI CLI' }
+    # Package Managers
+    [pscustomobject]@{ Id = 'Chocolatey'; Name = 'Chocolatey Non-Admin';       InstallDir = Join-Path $HOME '.local\chocolatey';  ScriptPath = Join-Path $ScriptRoot 'Chocolatey-Installer\uninstall-chocolatey.ps1'; Category = 'Package Managers' }
+    [pscustomobject]@{ Id = 'Scoop';      Name = 'Scoop Package Manager';      InstallDir = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $HOME 'scoop' }; ScriptPath = Join-Path $ScriptRoot 'Scoop-Installer\uninstall-scoop.ps1'; Category = 'Package Managers' }
 )
 
 function Show-Help {
@@ -106,7 +112,7 @@ function Show-Help {
     Write-Host @"
 
 SYNOPSIS:
-  uninstall-all.ps1 [-All] [-CliTools] [Specific Tool Flags...] [-KeepCache] [-List] [-Help]
+  uninstall-all.ps1 [-All] [-CliTools] [-PackageManagers] [Specific Tool Flags...] [-KeepCache] [-List] [-Help]
 
 DESCRIPTION:
   Removes installed non-administrator toolchains, restores User PATH automatically,
@@ -116,8 +122,9 @@ DESCRIPTION:
 OPTIONS:
   -All             Uninstall all installed toolchains and utilities.
   -CliTools        Uninstall only the 9 AI Developer CLIs & agent runtimes.
+  -PackageManagers Uninstall Chocolatey and Scoop package managers.
   -KeepCache       Do not remove cached zip files from `$HOME\Downloads.
-  -List            List current installation status for all 33 tools.
+  -List            List current installation status for all 35 tools.
   -Help            Show this detailed help manual.
 
 EXAMPLES:
@@ -205,6 +212,12 @@ else {
     if ($Claude)      { $SelectedIds.Add('Claude') }
     if ($Aider)       { $SelectedIds.Add('Aider') }
     if ($Herdr)       { $SelectedIds.Add('Herdr') }
+    if ($Chocolatey)  { $SelectedIds.Add('Chocolatey') }
+    if ($Scoop)       { $SelectedIds.Add('Scoop') }
+    if ($PackageManagers) {
+        $SelectedIds.Add('Chocolatey')
+        $SelectedIds.Add('Scoop')
+    }
 }
 
 if ($SelectedIds.Count -eq 0) {

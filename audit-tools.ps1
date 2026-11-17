@@ -19,7 +19,7 @@ SYNOPSIS:
   audit-tools.ps1 [-Json] [-Quiet] [-Help]
 
 DESCRIPTION:
-  Scans all 33 non-admin developer toolchains, inspecting binary existence,
+  Scans all 35 non-admin developer toolchains, inspecting binary existence,
   execution health, Authenticode digital signatures, User PATH configuration,
   and local checksum verification.
 
@@ -69,6 +69,8 @@ $AuditCatalog = @(
     @{ Id = 'Aider';      Name = 'Aider CLI';                ExePath = Join-Path $HOME '.local\aider\bin\aider.cmd';                 Args = '--version' }
     @{ Id = 'Uv';         Name = 'uv (Python manager)';      ExePath = Join-Path $HOME '.local\uv\bin\uv.exe';                       Args = '--version' }
     @{ Id = 'Herdr';      Name = 'Herdr Agent Runtime (hc)'; ExePath = Join-Path $HOME '.local\herdr\bin\hc.exe';                   Args = '--version' }
+    @{ Id = 'Chocolatey'; Name = 'Chocolatey Non-Admin';     ExePath = Join-Path $HOME '.local\chocolatey\bin\choco.exe';            Args = '--version' }
+    @{ Id = 'Scoop';      Name = 'Scoop Package Manager';    ExePath = if ($env:SCOOP) { Join-Path $env:SCOOP 'shims\scoop.cmd' } else { Join-Path $HOME 'scoop\shims\scoop.cmd' }; Args = '--version' }
 )
 
 $UserPath = [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::User)
