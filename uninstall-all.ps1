@@ -35,6 +35,7 @@ param(
     [switch]$Claude,
     [switch]$Aider,
     [switch]$Herdr,
+    [switch]$Playwright,
     [switch]$Chocolatey,
     [switch]$Scoop,
     [switch]$PackageManagers,
@@ -99,6 +100,7 @@ $ToolchainRegistry = @(
     [pscustomobject]@{ Id = 'Aider';      Name = 'Aider CLI';                  InstallDir = Join-Path $HOME '.local\aider';       ScriptPath = Join-Path $ScriptRoot 'Aider-CLI\uninstall-aider.ps1';                 Category = 'AI CLI' }
     [pscustomobject]@{ Id = 'Uv';         Name = 'uv (Python manager)';        InstallDir = Join-Path $HOME '.local\uv';          ScriptPath = Join-Path $ScriptRoot 'Uv-CLI\uninstall-uv.ps1';                       Category = 'AI CLI' }
     [pscustomobject]@{ Id = 'Herdr';      Name = 'Herdr Agent Runtime (hc)';   InstallDir = Join-Path $HOME '.local\herdr';       ScriptPath = Join-Path $ScriptRoot 'Herdr-CLI\uninstall-herdr.ps1';                 Category = 'AI CLI' }
+    [pscustomobject]@{ Id = 'Playwright'; Name = 'Playwright CLI';             InstallDir = Join-Path $HOME '.npm-global';        ScriptPath = Join-Path $ScriptRoot 'Playwright-CLI\uninstall-playwright.ps1';       Category = 'AI CLI' }
     # Package Managers
     [pscustomobject]@{ Id = 'Chocolatey'; Name = 'Chocolatey Non-Admin';       InstallDir = Join-Path $HOME '.local\chocolatey';  ScriptPath = Join-Path $ScriptRoot 'Chocolatey-Installer\uninstall-chocolatey.ps1'; Category = 'Package Managers' }
     [pscustomobject]@{ Id = 'Scoop';      Name = 'Scoop Package Manager';      InstallDir = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $HOME 'scoop' }; ScriptPath = Join-Path $ScriptRoot 'Scoop-Installer\uninstall-scoop.ps1'; Category = 'Package Managers' }
@@ -121,10 +123,10 @@ DESCRIPTION:
 
 OPTIONS:
   -All             Uninstall all installed toolchains and utilities.
-  -CliTools        Uninstall only the 9 AI Developer CLIs & agent runtimes.
+  -CliTools        Uninstall only the 10 AI Developer CLIs & agent runtimes.
   -PackageManagers Uninstall Chocolatey and Scoop package managers.
   -KeepCache       Do not remove cached zip files from `$HOME\Downloads.
-  -List            List current installation status for all 35 tools.
+  -List            List current installation status for all 36 tools.
   -Help            Show this detailed help manual.
 
 EXAMPLES:
@@ -176,7 +178,7 @@ if ($All) {
     $ToolchainRegistry | ForEach-Object { $SelectedIds.Add($_.Id) }
 }
 elseif ($CliTools) {
-    @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr') | ForEach-Object { $SelectedIds.Add($_) }
+    @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr', 'Playwright') | ForEach-Object { $SelectedIds.Add($_) }
 }
 else {
     if ($Gpg4win)     { $SelectedIds.Add('Gpg4win') }
@@ -212,6 +214,7 @@ else {
     if ($Claude)      { $SelectedIds.Add('Claude') }
     if ($Aider)       { $SelectedIds.Add('Aider') }
     if ($Herdr)       { $SelectedIds.Add('Herdr') }
+    if ($Playwright)  { $SelectedIds.Add('Playwright') }
     if ($Chocolatey)  { $SelectedIds.Add('Chocolatey') }
     if ($Scoop)       { $SelectedIds.Add('Scoop') }
     if ($PackageManagers) {
@@ -246,7 +249,7 @@ if ($SelectedIds.Count -eq 0) {
 
         Write-Host
         Write-Host "  [A]  Uninstall All Tools" -ForegroundColor Red
-        Write-Host "  [C]  Uninstall All 9 AI Developer CLIs & Runtimes" -ForegroundColor Yellow
+        Write-Host "  [C]  Uninstall All 10 AI Developer CLIs & Runtimes" -ForegroundColor Yellow
         Write-Host "  [L]  List Full Inventory" -ForegroundColor Cyan
         Write-Host "  [H]  View Help Manual" -ForegroundColor Cyan
         Write-Host "  [Q]  Quit" -ForegroundColor White
@@ -263,7 +266,7 @@ if ($SelectedIds.Count -eq 0) {
             break
         }
         elseif ($Choice -ieq 'C') {
-            @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr') | ForEach-Object { $SelectedIds.Add($_) }
+            @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr', 'Playwright') | ForEach-Object { $SelectedIds.Add($_) }
             break
         }
         elseif ($Choice -ieq 'L') {

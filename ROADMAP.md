@@ -239,14 +239,31 @@
 
 ---
 
+## Phase 2.96 — AI Agent Browser Automation Expansion (Completed)
+
+- [x] **Non-Admin Microsoft Playwright CLI with SKILLs (`Playwright-CLI/`):**
+  - [x] Automated prerequisite verification of Node.js 20+ and npm in `01-verify-prerequisites.ps1`.
+  - [x] Global user-space installation of `@playwright/cli` into `$HOME\.npm-global` in `02-install-playwright.ps1`.
+  - [x] User PATH environment configuration with timestamped backup in `03-configure-playwright-environment.ps1`.
+  - [x] Full uninstaller `uninstall-playwright.ps1` with shim and package cleanup.
+  - [x] Comprehensive documentation in `START_HERE.md` covering agent commands, session daemons, and skills.
+- [x] **Lifecycle Orchestrator Updates (36 Tools):**
+  - [x] `install-all.ps1`: Added `-Playwright` switch, expanded toolchain inventory to **36 tools**, updated `-CliTools` bundle to 10 AI CLIs.
+  - [x] `uninstall-all.ps1`: Added `-Playwright` switch, updated inventory to **36 tools** and 10 AI CLIs.
+  - [x] `update-all.ps1`: Added `@playwright/cli` upstream npm registry tracking, `-Playwright` flag, expanded inventory to **36 tools**.
+  - [x] `audit-tools.ps1`: Added Playwright verification to catalog, verified `PASS` status.
+**Exit:** Microsoft Playwright CLI fully integrated into non-admin developer toolchain suite with lifecycle support.
+
+---
+
 ## Phase 3 — Lifecycle Management & CI Automation (In Progress)
 
 - [x] **Dedicated Uninstaller Scripts:**
-  - [x] Implemented modular `uninstall-*.ps1` across all 35 tool directories.
+  - [x] Implemented modular `uninstall-*.ps1` across all 36 tool directories.
   - [x] Central orchestrator `uninstall-all.ps1` with batch (`-All`, `-CliTools`, `-PackageManagers`), selective flags, daemon termination (`gpgconf --kill all`, `herdr-core`), download cache purge (`-KeepCache`), and automated User PATH restoration with backups stored in `$HOME\.local\environment-backups\`.
 - [x] **Toolchain Upgrader / Integrity Auditor:**
-  - [x] `audit-tools.ps1`: Comprehensive 35-tool integrity scanner checking binary existence, CLI execution, Authenticode digital signatures, and User PATH health. Emits structured JSON (`-Json`) or colored console tables.
-  - [x] `update-all.ps1`: Automated upstream release monitoring across GitHub Releases, npm registry, PyPI, Go API, Node.js distribution catalog, and Herdr manifests (covering all 35 tools). Features dry-run auditing (`-CheckOnly`), automated rate-limit mitigation via token auto-detection, batch and selective in-place upgrade runners (`-All`, `-CliTools`, `-PackageManagers`, `-Force`), structured JSON output, and interactive TUI menu.
+  - [x] `audit-tools.ps1`: Comprehensive 36-tool integrity scanner checking binary existence, CLI execution, Authenticode digital signatures, and User PATH health. Emits structured JSON (`-Json`) or colored console tables.
+  - [x] `update-all.ps1`: Automated upstream release monitoring across GitHub Releases, npm registry, PyPI, Go API, Node.js distribution catalog, and Herdr manifests (covering all 36 tools). Features dry-run auditing (`-CheckOnly`), automated rate-limit mitigation via token auto-detection, batch and selective in-place upgrade runners (`-All`, `-CliTools`, `-PackageManagers`, `-Force`), structured JSON output, and interactive TUI menu.
 - [ ] **Headless CI Regression Testing:**
   - Automated GitHub Actions workflow running on clean Windows Server runner to test all installation scripts end-to-end without administrative elevation.
 **Exit:** Self-updating, self-healing, automated non-admin developer platform.

@@ -72,6 +72,7 @@ This repository provides reproducible, fully non-elevated installers for modern 
 | **Aider Pair Programmer** | `Aider-CLI/` | Python (`aider-chat`) | `$HOME\.local\aider` | [aider.chat](https://aider.chat/) |
 | **Astral uv** | `Uv-CLI/` | Native x64 Binary | `$HOME\.local\uv\bin\uv.exe` | [docs.astral.sh/uv](https://docs.astral.sh/uv/) |
 | **Herdr Runtime (hc)** | `Herdr-CLI/` | Native x64 Binary | `$HOME\.local\herdr\bin\hc.exe` | [herdr.dev](https://herdr.dev/) |
+| **Playwright CLI** | `Playwright-CLI/` | npm (`@playwright/cli`) | `$HOME\.npm-global` | [github.com/microsoft/playwright-cli](https://github.com/microsoft/playwright-cli) |
 
 ### Package Managers & User-Space Shims
 | Toolchain | Folder | Target Path | Key Components |
@@ -89,7 +90,7 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 # Show interactive console menu
 .\install-all.ps1
 
-# Display complete toolchain & CLI inventory status (35 managed tools)
+# Display complete toolchain & CLI inventory status (36 managed tools)
 .\install-all.ps1 -List
 
 # Install Gpg4win cryptographic foundation
@@ -101,7 +102,7 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 # Install all tools across all categories in one sequence
 .\install-all.ps1 -All
 
-# Install only the 9 AI Developer CLIs & agent runtimes
+# Install only the 10 AI Developer CLIs & agent runtimes
 .\install-all.ps1 -CliTools
 
 # Install user-space package managers
@@ -138,7 +139,7 @@ The repository includes a top-level orchestrator script (`install-all.ps1`) feat
 
 ## Lifecycle Management: Uninstallation, Auditing & Upgrades
 
-Phase 3 introduces comprehensive lifecycle management tooling for the 35 non-admin developer toolchains.
+Phase 3 introduces comprehensive lifecycle management tooling for the 36 non-admin developer toolchains.
 
 ### 1. Unified Uninstaller Orchestrator (`uninstall-all.ps1`)
 
@@ -148,19 +149,19 @@ Safely and cleanly removes installed toolchains, wipes user directories (`$HOME\
 # Interactive uninstaller menu
 .\uninstall-all.ps1
 
-# List installed status across all 35 tools
+# List installed status across all 36 tools
 .\uninstall-all.ps1 -List
 
 # Cleanly uninstall a specific tool (e.g., KeePassXC)
 .\uninstall-all.ps1 -KeePassXC
 
-# Uninstall all 9 AI Developer CLIs while retaining download installers
+# Uninstall all 10 AI Developer CLIs while retaining download installers
 .\uninstall-all.ps1 -CliTools -KeepCache
 
 # Uninstall package managers
 .\uninstall-all.ps1 -PackageManagers
 
-# Complete clean removal of all 35 tools
+# Complete clean removal of all 36 tools
 .\uninstall-all.ps1 -All
 ```
 
@@ -170,7 +171,7 @@ Each tool directory also contains an isolated, modular `uninstall-<tool>.ps1` (e
 
 ### 2. Toolchain Integrity Auditor (`audit-tools.ps1`)
 
-Scans all 35 toolchains, verifying binary presence on disk, CLI version command execution, Authenticode digital signatures (`GitHub, Inc.`, `DroidMonkey Apps, LLC`, etc.), and User PATH configuration:
+Scans all 36 toolchains, verifying binary presence on disk, CLI version command execution, Authenticode digital signatures (`GitHub, Inc.`, `DroidMonkey Apps, LLC`, etc.), and User PATH configuration:
 
 ```powershell
 # Run full human-readable integrity report
@@ -285,6 +286,7 @@ cd ..\Claude-CLI;            .\install-claude.ps1
 cd ..\Aider-CLI;             .\install-aider.ps1
 cd ..\Uv-CLI;                .\install-uv.ps1
 cd ..\Herdr-CLI;             .\install-herdr.ps1
+cd ..\Playwright-CLI;        .\install-playwright.ps1
 
 # Package Managers & User-Space Shims
 cd ..\Chocolatey-Installer;  .\install-chocolatey.ps1

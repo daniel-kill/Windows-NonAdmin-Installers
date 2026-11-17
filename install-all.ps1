@@ -35,6 +35,7 @@ param(
     [switch]$Claude,
     [switch]$Aider,
     [switch]$Herdr,
+    [switch]$Playwright,
     [switch]$Chocolatey,
     [switch]$Scoop,
     [switch]$PackageManagers,
@@ -325,6 +326,14 @@ $ToolchainRegistry = @(
         Description = 'Persistent terminal runtime and agent workspace manager (hc.exe / herdr-core)'
         Category    = 'AI CLI'
     }
+    [pscustomobject]@{
+        Id          = 'Playwright'
+        Name        = 'Playwright CLI'
+        InstallDir  = Join-Path $HOME '.npm-global'
+        ScriptPath  = Join-Path $ScriptRoot 'Playwright-CLI\install-playwright.ps1'
+        Description = 'Microsoft Playwright CLI for AI coding agents (@playwright/cli)'
+        Category    = 'AI CLI'
+    }
     # Package Managers
     [pscustomobject]@{
         Id          = 'Chocolatey'
@@ -355,7 +364,7 @@ SYNOPSIS:
   install-all.ps1 [-All] [-CliTools] [-PackageManagers] [-Gpg4win] [-KeePassXC] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
                   [-Bun] [-Deno] [-Uv] [-Cmake] [-Ninja]
                   [-Git] [-Gh] [-SevenZip] [-Ripgrep] [-Fd] [-Jq] [-Fzf] [-Bat] [-Delta] [-Eza] [-Cloudflared]
-                  [-VSCode] [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider] [-Herdr]
+                  [-VSCode] [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider] [-Herdr] [-Playwright]
                   [-Chocolatey] [-Scoop]
                   [-Force] [-List] [-Help]
 
@@ -366,7 +375,7 @@ DESCRIPTION:
 
 OPTIONS:
   -All             Install all available prerequisites, toolchains, utilities, and AI CLIs.
-  -CliTools        Install only the 9 AI Developer CLIs & agent runtimes (Cline, Hermes, Vibe, Ori, Antigravity, Copilot, Claude, Aider, Herdr).
+  -CliTools        Install only the 10 AI Developer CLIs & agent runtimes (Cline, Hermes, Vibe, Ori, Antigravity, Copilot, Claude, Aider, Herdr, Playwright).
   -PackageManagers Install both Chocolatey and Scoop package managers.
   -Gpg4win         Install Gpg4win and GnuPG (gpg.exe) into `$HOME\.local\gpg4win.
   -KeePassXC       Install KeePassXC GUI and keepassxc-cli into `$HOME\.local\keepassxc.
@@ -401,6 +410,7 @@ OPTIONS:
   -Claude          Install Anthropic Claude Code CLI into `$HOME\.npm-global.
   -Aider           Install Aider terminal pair programmer into `$HOME\.local\aider.
   -Herdr           Install Herdr agent runtime and terminal manager (hc) into `$HOME\.local\herdr.
+  -Playwright      Install Microsoft Playwright CLI for AI coding agents into `$HOME\.npm-global.
   -Chocolatey      Install Chocolatey non-admin package manager into `$HOME\.local\chocolatey.
   -Scoop           Install Scoop package manager into `$HOME\scoop.
   -Force           Force re-installation (removes existing directory before reinstalling).
@@ -471,7 +481,7 @@ if ($All) {
     $ToolchainRegistry | ForEach-Object { $SelectedIds.Add($_.Id) }
 }
 elseif ($CliTools) {
-    @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr') | ForEach-Object { $SelectedIds.Add($_) }
+    @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr', 'Playwright') | ForEach-Object { $SelectedIds.Add($_) }
 }
 else {
     if ($Gpg4win)     { $SelectedIds.Add('Gpg4win') }
@@ -507,6 +517,7 @@ else {
     if ($Claude)      { $SelectedIds.Add('Claude') }
     if ($Aider)       { $SelectedIds.Add('Aider') }
     if ($Herdr)       { $SelectedIds.Add('Herdr') }
+    if ($Playwright)  { $SelectedIds.Add('Playwright') }
     if ($Chocolatey)  { $SelectedIds.Add('Chocolatey') }
     if ($Scoop)       { $SelectedIds.Add('Scoop') }
     if ($PackageManagers) {
@@ -542,7 +553,7 @@ if ($SelectedIds.Count -eq 0) {
 
         Write-Host
         Write-Host "  [A]  Install All Tools (Prerequisites + Toolchains + Utilities + CLIs)" -ForegroundColor Cyan
-        Write-Host "  [C]  Install All 9 AI Developer CLIs & Agent Runtimes" -ForegroundColor Cyan
+        Write-Host "  [C]  Install All 10 AI Developer CLIs & Agent Runtimes" -ForegroundColor Cyan
         Write-Host "  [L]  List Full Inventory" -ForegroundColor Cyan
         Write-Host "  [H]  View Detailed Help & Flags" -ForegroundColor Cyan
         Write-Host "  [Q]  Quit" -ForegroundColor Red
@@ -559,7 +570,7 @@ if ($SelectedIds.Count -eq 0) {
             break
         }
         elseif ($Choice -ieq 'C') {
-            @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr') | ForEach-Object { $SelectedIds.Add($_) }
+            @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr', 'Playwright') | ForEach-Object { $SelectedIds.Add($_) }
             break
         }
         elseif ($Choice -ieq 'L') {

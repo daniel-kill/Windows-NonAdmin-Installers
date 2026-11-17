@@ -37,6 +37,7 @@ param(
     [switch]$Claude,
     [switch]$Aider,
     [switch]$Herdr,
+    [switch]$Playwright,
     [switch]$Chocolatey,
     [switch]$Scoop,
     [switch]$PackageManagers,
@@ -478,6 +479,18 @@ $ToolchainRegistry = @(
         UpstreamType   = 'Herdr'
         UpstreamTarget = 'https://releases.herdr.dev/core/latest.json'
     }
+    [pscustomobject]@{
+        Id             = 'Playwright'
+        Name           = 'Playwright CLI'
+        Category       = 'AI CLI'
+        InstallDir     = Join-Path $HOME '.npm-global'
+        ScriptPath     = Join-Path $ScriptRoot 'Playwright-CLI\install-playwright.ps1'
+        ExePath        = Join-Path $HOME '.npm-global\playwright-cli.cmd'
+        VersionArgs    = '--version'
+        VersionRegex   = '(?im)^([0-9\.]+)'
+        UpstreamType   = 'Npm'
+        UpstreamTarget = '@playwright/cli'
+    }
     # Package Managers
     [pscustomobject]@{
         Id             = 'Chocolatey'
@@ -519,18 +532,18 @@ SYNOPSIS:
                  [-Gpg4win] [-KeePassXC] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
                  [-Bun] [-Deno] [-Uv] [-Cmake] [-Ninja]
                  [-Git] [-Gh] [-SevenZip] [-Ripgrep] [-Fd] [-Jq] [-Fzf] [-Bat] [-Delta] [-Eza] [-Cloudflared]
-                 [-VSCode] [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider] [-Herdr]
+                 [-VSCode] [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider] [-Herdr] [-Playwright]
                  [-Chocolatey] [-Scoop]
 
 DESCRIPTION:
-  Monitors, audits, and upgrades 35 user-space developer toolchains, utilities,
+  Monitors, audits, and upgrades 36 user-space developer toolchains, utilities,
   editors, and AI developer CLIs without requiring administrative privileges.
   Audits local installations against upstream release feeds (GitHub, Npm, PyPI, Go, Node, Herdr).
 
 OPTIONS:
   -CheckOnly        Audit upstream releases and display a comparative report without upgrading.
   -All              Upgrade all installed tools that are outdated.
-  -CliTools         Target only the 9 AI Developer CLIs and agent runtimes.
+  -CliTools         Target only the 10 AI Developer CLIs and agent runtimes.
   -PackageManagers  Target Chocolatey and Scoop package managers.
   -Force            Force in-place reinstall/upgrade even if installed version matches upstream.
   -Json             Output status and version comparisons as structured JSON.
@@ -539,7 +552,7 @@ OPTIONS:
   -Help             Show this manual.
 
 EXAMPLES:
-  # Check for updates across all 35 tools (dry-run audit):
+  # Check for updates across all 36 tools (dry-run audit):
   pwsh update-all.ps1 -CheckOnly
 
   # Upgrade all outdated tools:
@@ -779,7 +792,7 @@ $ExplicitFlags = @(
     'Gpg4win', 'KeePassXC', 'MSYS2', 'Rust', 'Go', 'Node', 'Python',
     'Bun', 'Deno', 'Uv', 'Cmake', 'Ninja',
     'Git', 'Gh', 'SevenZip', 'Ripgrep', 'Fd', 'Jq', 'Fzf', 'Bat', 'Delta', 'Eza', 'Cloudflared',
-    'VSCode', 'Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr',
+    'VSCode', 'Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr', 'Playwright',
     'Chocolatey', 'Scoop'
 )
 
@@ -793,7 +806,7 @@ foreach ($Flag in $ExplicitFlags) {
 }
 
 if ($CliTools) {
-    $CliIds = @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr')
+    $CliIds = @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr', 'Playwright')
     foreach ($id in $CliIds) {
         if (-not $SelectedToolIds.Contains($id)) {
             $SelectedToolIds.Add($id)
