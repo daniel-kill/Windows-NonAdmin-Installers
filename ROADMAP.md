@@ -163,6 +163,61 @@
 
 ---
 
+## Phase 2.85 — Build Systems, Next-Gen Runtimes, Terminal Suite & Agent Runtime Expansion (Completed)
+
+- [x] **Non-Admin CMake Portable Installer (`CMake-Installer/`):**
+  - [x] Automated discovery and download of official `cmake-*-windows-x86_64.zip` and `cmake-*-SHA-256.txt`.
+  - [x] Cryptographic SHA-256 verification against official digest.
+  - [x] Extraction and deployment to `$HOME\.local\cmake` with PATH backup and `cmake --version` verification.
+- [x] **Non-Admin Ninja Build System Installer (`Ninja-Installer/`):**
+  - [x] Automated discovery and download of official `ninja-win.zip`.
+  - [x] SHA-256 integrity calculation and deployment to `$HOME\.local\ninja\bin\ninja.exe`.
+  - [x] User PATH configuration with automated backup and `ninja --version` verification.
+- [x] **Non-Admin Bun Runtime Installer (`Bun-CLI/`):**
+  - [x] Automated discovery and download of official `bun-windows-x64.zip` and `SHASUMS256.txt`.
+  - [x] Cryptographic SHA-256 verification against official digest.
+  - [x] Deployment to `$HOME\.local\bun\bin\bun.exe` with PATH backup and `bun --version` verification.
+- [x] **Non-Admin Deno Runtime Installer (`Deno-CLI/`):**
+  - [x] Automated discovery and download of official `deno-x86_64-pc-windows-msvc.zip` and `.sha256sum`.
+  - [x] Cryptographic SHA-256 verification against official release hash.
+  - [x] Deployment to `$HOME\.local\deno\bin\deno.exe` with PATH backup and `deno --version` verification.
+- [x] **Non-Admin Astral uv Python Package Manager (`Uv-CLI/`):**
+  - [x] Automated discovery and download of official `uv-x86_64-pc-windows-msvc.zip` and `.sha256`.
+  - [x] Cryptographic SHA-256 verification.
+  - [x] Deployment to `$HOME\.local\uv\bin` (`uv.exe` and `uvx.exe`) with PATH backup and verification.
+- [x] **Non-Admin fzf Fuzzy Finder Installer (`Fzf-CLI/`):**
+  - [x] Automated discovery and download of official `fzf-*-windows_amd64.zip` and `checksums.txt`.
+  - [x] Cryptographic SHA-256 verification against official checksum list.
+  - [x] Deployment to `$HOME\.local\fzf\bin\fzf.exe` with PATH backup and `fzf --version` verification.
+- [x] **Non-Admin bat Cat Clone Installer (`Bat-CLI/`):**
+  - [x] Automated discovery and download of official `bat-*-x86_64-pc-windows-msvc.zip`.
+  - [x] SHA-256 integrity calculation and deployment to `$HOME\.local\bat\bin\bat.exe`.
+  - [x] User PATH configuration with automated backup and `bat --version` verification.
+- [x] **Non-Admin git-delta Pager Installer (`Delta-CLI/`):**
+  - [x] Automated discovery and download of official `delta-*-x86_64-pc-windows-msvc.zip`.
+  - [x] SHA-256 integrity calculation and deployment to `$HOME\.local\delta\bin\delta.exe`.
+  - [x] User PATH configuration with automated backup and `delta --version` verification.
+- [x] **Non-Admin eza Modern ls Installer (`Eza-CLI/`):**
+  - [x] Automated discovery of official `eza.exe_x86_64-pc-windows-gnu.zip` and release notes SHA-256 parsing.
+  - [x] Cryptographic SHA-256 verification.
+  - [x] Deployment to `$HOME\.local\eza\bin\eza.exe` with PATH backup and `eza --version` verification.
+- [x] **Non-Admin Cloudflare Tunnel CLI Installer (`Cloudflared-CLI/`):**
+  - [x] Automated discovery of official `cloudflared-windows-amd64.exe` and release notes SHA-256 parsing.
+  - [x] Cryptographic SHA-256 verification.
+  - [x] Deployment to `$HOME\.local\cloudflared\bin\cloudflared.exe` with PATH backup and `cloudflared --version` verification.
+- [x] **Non-Admin Herdr AI Agent Runtime & Terminal Installer (`Herdr-CLI/`):**
+  - [x] Automated query of official Herdr release manifest (`latest.json`).
+  - [x] Cryptographic SHA-256 verification of `herdr-core-*-windows-x86_64.zip`.
+  - [x] Deployment of `herdr-core.exe`, `hc.exe`, and ConPTY into `$HOME\.local\herdr\bin`.
+  - [x] User PATH configuration with automated backup and `hc --version` verification.
+- [x] **Unified Multi-Toolchain CLI Runner (`install-all.ps1`) Expansion:**
+  - [x] Expanded toolchain inventory to **33 tools** across 6 logical categories.
+  - [x] Added dedicated flags: `-Cmake`, `-Ninja`, `-Bun`, `-Deno`, `-Uv`, `-Fzf`, `-Bat`, `-Delta`, `-Eza`, `-Cloudflared`, `-Herdr`.
+  - [x] Updated interactive console menu, `-List` dashboard, and `-CliTools` bundle to 9 AI agent runtimes.
+**Exit:** Comprehensive non-admin workstation offering build systems, next-gen runtimes, advanced terminal navigation, local tunneling, and AI agent runtime environments.
+
+---
+
 ## Phase 3 — Lifecycle Management & CI Automation (Future)
 
 - [ ] **Dedicated Uninstaller Scripts:**

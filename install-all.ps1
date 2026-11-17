@@ -9,12 +9,22 @@ param(
     [switch]$Go,
     [switch]$Node,
     [switch]$Python,
+    [switch]$Bun,
+    [switch]$Deno,
+    [switch]$Uv,
+    [switch]$Cmake,
+    [switch]$Ninja,
     [switch]$Git,
     [switch]$Gh,
     [switch]$SevenZip,
     [switch]$Ripgrep,
     [switch]$Fd,
     [switch]$Jq,
+    [switch]$Fzf,
+    [switch]$Bat,
+    [switch]$Delta,
+    [switch]$Eza,
+    [switch]$Cloudflared,
     [switch]$VSCode,
     [switch]$Cline,
     [switch]$Hermes,
@@ -24,6 +34,7 @@ param(
     [switch]$Copilot,
     [switch]$Claude,
     [switch]$Aider,
+    [switch]$Herdr,
     [switch]$CliTools,
     [switch]$Force,
     [switch]$List,
@@ -99,6 +110,39 @@ $ToolchainRegistry = @(
         Description = 'Python 3 runtime, pip package manager, and site-packages setup'
         Category    = 'Core Toolchains'
     }
+    [pscustomobject]@{
+        Id          = 'Bun'
+        Name        = 'Bun JS/TS Runtime'
+        InstallDir  = Join-Path $HOME '.local\bun'
+        ScriptPath  = Join-Path $ScriptRoot 'Bun-CLI\install-bun.ps1'
+        Description = 'All-in-one JavaScript & TypeScript runtime, bundler, and package manager'
+        Category    = 'Core Toolchains'
+    }
+    [pscustomobject]@{
+        Id          = 'Deno'
+        Name        = 'Deno TS/JS Runtime'
+        InstallDir  = Join-Path $HOME '.local\deno'
+        ScriptPath  = Join-Path $ScriptRoot 'Deno-CLI\install-deno.ps1'
+        Description = 'Modern, secure TypeScript & JavaScript runtime with built-in tooling'
+        Category    = 'Core Toolchains'
+    }
+    # Build Systems
+    [pscustomobject]@{
+        Id          = 'Cmake'
+        Name        = 'CMake Portable'
+        InstallDir  = Join-Path $HOME '.local\cmake'
+        ScriptPath  = Join-Path $ScriptRoot 'CMake-Installer\install-cmake.ps1'
+        Description = 'Official cross-platform build automation generator (cmake, ctest, cpack)'
+        Category    = 'Build Systems'
+    }
+    [pscustomobject]@{
+        Id          = 'Ninja'
+        Name        = 'Ninja Build System'
+        InstallDir  = Join-Path $HOME '.local\ninja'
+        ScriptPath  = Join-Path $ScriptRoot 'Ninja-Installer\install-ninja.ps1'
+        Description = 'Small build system with a focus on speed'
+        Category    = 'Build Systems'
+    }
     # VCS & Core Utilities
     [pscustomobject]@{
         Id          = 'Git'
@@ -146,6 +190,46 @@ $ToolchainRegistry = @(
         InstallDir  = Join-Path $HOME '.local\jq'
         ScriptPath  = Join-Path $ScriptRoot 'Jq-CLI\install-jq.ps1'
         Description = 'Command-line JSON processor and filter'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Fzf'
+        Name        = 'fzf (fuzzy finder)'
+        InstallDir  = Join-Path $HOME '.local\fzf'
+        ScriptPath  = Join-Path $ScriptRoot 'Fzf-CLI\install-fzf.ps1'
+        Description = 'Interactive command-line fuzzy finder'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Bat'
+        Name        = 'bat (cat clone)'
+        InstallDir  = Join-Path $HOME '.local\bat'
+        ScriptPath  = Join-Path $ScriptRoot 'Bat-CLI\install-bat.ps1'
+        Description = 'A cat clone with syntax highlighting and Git integration'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Delta'
+        Name        = 'git-delta (diff pager)'
+        InstallDir  = Join-Path $HOME '.local\delta'
+        ScriptPath  = Join-Path $ScriptRoot 'Delta-CLI\install-delta.ps1'
+        Description = 'A syntax-highlighting pager for git, diff, and grep output'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Eza'
+        Name        = 'eza (ls replacement)'
+        InstallDir  = Join-Path $HOME '.local\eza'
+        ScriptPath  = Join-Path $ScriptRoot 'Eza-CLI\install-eza.ps1'
+        Description = 'Modern, feature-rich replacement for ls and dir'
+        Category    = 'VCS & Utilities'
+    }
+    [pscustomobject]@{
+        Id          = 'Cloudflared'
+        Name        = 'Cloudflare Tunnel CLI'
+        InstallDir  = Join-Path $HOME '.local\cloudflared'
+        ScriptPath  = Join-Path $ScriptRoot 'Cloudflared-CLI\install-cloudflared.ps1'
+        Description = 'Cloudflare Tunnel daemon & CLI for non-admin localhost exposure'
         Category    = 'VCS & Utilities'
     }
     # Editors & IDEs
@@ -222,6 +306,22 @@ $ToolchainRegistry = @(
         Description = 'Aider AI terminal pair programmer in isolated virtualenv'
         Category    = 'AI CLI'
     }
+    [pscustomobject]@{
+        Id          = 'Uv'
+        Name        = 'uv (Python manager)'
+        InstallDir  = Join-Path $HOME '.local\uv'
+        ScriptPath  = Join-Path $ScriptRoot 'Uv-CLI\install-uv.ps1'
+        Description = 'Extremely fast Python package and virtualenv manager (uv & uvx)'
+        Category    = 'AI CLI'
+    }
+    [pscustomobject]@{
+        Id          = 'Herdr'
+        Name        = 'Herdr Agent Runtime (hc)'
+        InstallDir  = Join-Path $HOME '.local\herdr'
+        ScriptPath  = Join-Path $ScriptRoot 'Herdr-CLI\install-herdr.ps1'
+        Description = 'Persistent terminal runtime and agent workspace manager (hc.exe / herdr-core)'
+        Category    = 'AI CLI'
+    }
 )
 
 function Show-Help {
@@ -233,8 +333,9 @@ function Show-Help {
 
 SYNOPSIS:
   install-all.ps1 [-All] [-CliTools] [-Gpg4win] [-KeePassXC] [-MSYS2] [-Rust] [-Go] [-Node] [-Python]
-                  [-Git] [-Gh] [-SevenZip] [-Ripgrep] [-Fd] [-Jq] [-VSCode]
-                  [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider]
+                  [-Bun] [-Deno] [-Uv] [-Cmake] [-Ninja]
+                  [-Git] [-Gh] [-SevenZip] [-Ripgrep] [-Fd] [-Jq] [-Fzf] [-Bat] [-Delta] [-Eza] [-Cloudflared]
+                  [-VSCode] [-Cline] [-Hermes] [-Vibe] [-Ori] [-Antigravity] [-Copilot] [-Claude] [-Aider] [-Herdr]
                   [-Force] [-List] [-Help]
 
 DESCRIPTION:
@@ -244,7 +345,7 @@ DESCRIPTION:
 
 OPTIONS:
   -All             Install all available prerequisites, toolchains, utilities, and AI CLIs.
-  -CliTools        Install only the 8 AI Developer CLIs (Cline, Hermes, Vibe, Ori, Antigravity, Copilot, Claude, Aider).
+  -CliTools        Install only the 9 AI Developer CLIs & agent runtimes (Cline, Hermes, Vibe, Ori, Antigravity, Copilot, Claude, Aider, Herdr).
   -Gpg4win         Install Gpg4win and GnuPG (gpg.exe) into `$HOME\.local\gpg4win.
   -KeePassXC       Install KeePassXC GUI and keepassxc-cli into `$HOME\.local\keepassxc.
   -MSYS2           Install MSYS2 with UCRT64 GCC, Make, and binutils into `$HOME\msys64.
@@ -252,12 +353,22 @@ OPTIONS:
   -Go              Install official Go compiler & tools into `$HOME\.local\go.
   -Node            Install Node.js LTS and NPM into `$HOME\.local\node.
   -Python          Install portable Python 3 with pip into `$HOME\.local\python.
+  -Bun             Install Bun JS/TS runtime and package manager into `$HOME\.local\bun.
+  -Deno            Install Deno secure TypeScript & JavaScript runtime into `$HOME\.local\deno.
+  -Uv              Install Astral uv Python package manager into `$HOME\.local\uv.
+  -Cmake           Install CMake Portable generator into `$HOME\.local\cmake.
+  -Ninja           Install Ninja build system into `$HOME\.local\ninja.
   -Git             Install PortableGit with Git Bash into `$HOME\.local\git.
   -Gh              Install GitHub CLI (gh.exe) into `$HOME\.local\gh.
   -SevenZip        Install 7-Zip archiver CLI (7z.exe) into `$HOME\.local\7zip.
   -Ripgrep         Install ripgrep fast search (rg.exe) into `$HOME\.local\ripgrep.
   -Fd              Install fd finder (fd.exe) into `$HOME\.local\fd.
   -Jq              Install jq JSON processor (jq.exe) into `$HOME\.local\jq.
+  -Fzf             Install fzf fuzzy finder into `$HOME\.local\fzf.
+  -Bat             Install bat cat clone with syntax highlighting into `$HOME\.local\bat.
+  -Delta           Install git-delta syntax pager into `$HOME\.local\delta.
+  -Eza             Install eza modern ls replacement into `$HOME\.local\eza.
+  -Cloudflared     Install Cloudflare Tunnel CLI into `$HOME\.local\cloudflared.
   -VSCode          Install Visual Studio Code portable into `$HOME\.local\vscode.
   -Cline           Install Cline CLI into `$HOME\.npm-global.
   -Hermes          Install Hermes Agent CLI into `$HOME\.local\hermes.
@@ -267,6 +378,7 @@ OPTIONS:
   -Copilot         Install GitHub Copilot CLI into `$HOME\.npm-global.
   -Claude          Install Anthropic Claude Code CLI into `$HOME\.npm-global.
   -Aider           Install Aider terminal pair programmer into `$HOME\.local\aider.
+  -Herdr           Install Herdr agent runtime and terminal manager (hc) into `$HOME\.local\herdr.
   -Force           Force re-installation (removes existing directory before reinstalling).
   -List            Display the current installation status of all toolchains.
   -Help            Show this detailed help manual and usage examples.
@@ -335,7 +447,7 @@ if ($All) {
     $ToolchainRegistry | ForEach-Object { $SelectedIds.Add($_.Id) }
 }
 elseif ($CliTools) {
-    @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider') | ForEach-Object { $SelectedIds.Add($_) }
+    @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr') | ForEach-Object { $SelectedIds.Add($_) }
 }
 else {
     if ($Gpg4win)     { $SelectedIds.Add('Gpg4win') }
@@ -345,12 +457,22 @@ else {
     if ($Go)          { $SelectedIds.Add('Go') }
     if ($Node)        { $SelectedIds.Add('Node') }
     if ($Python)      { $SelectedIds.Add('Python') }
+    if ($Bun)         { $SelectedIds.Add('Bun') }
+    if ($Deno)        { $SelectedIds.Add('Deno') }
+    if ($Uv)          { $SelectedIds.Add('Uv') }
+    if ($Cmake)       { $SelectedIds.Add('Cmake') }
+    if ($Ninja)       { $SelectedIds.Add('Ninja') }
     if ($Git)         { $SelectedIds.Add('Git') }
     if ($Gh)          { $SelectedIds.Add('Gh') }
     if ($SevenZip)    { $SelectedIds.Add('SevenZip') }
     if ($Ripgrep)     { $SelectedIds.Add('Ripgrep') }
     if ($Fd)          { $SelectedIds.Add('Fd') }
     if ($Jq)          { $SelectedIds.Add('Jq') }
+    if ($Fzf)         { $SelectedIds.Add('Fzf') }
+    if ($Bat)         { $SelectedIds.Add('Bat') }
+    if ($Delta)       { $SelectedIds.Add('Delta') }
+    if ($Eza)         { $SelectedIds.Add('Eza') }
+    if ($Cloudflared) { $SelectedIds.Add('Cloudflared') }
     if ($VSCode)      { $SelectedIds.Add('VSCode') }
     if ($Cline)       { $SelectedIds.Add('Cline') }
     if ($Hermes)      { $SelectedIds.Add('Hermes') }
@@ -360,6 +482,7 @@ else {
     if ($Copilot)     { $SelectedIds.Add('Copilot') }
     if ($Claude)      { $SelectedIds.Add('Claude') }
     if ($Aider)       { $SelectedIds.Add('Aider') }
+    if ($Herdr)       { $SelectedIds.Add('Herdr') }
 }
 
 # Interactive Menu when run bare and not in headless non-interactive mode
@@ -388,8 +511,8 @@ if ($SelectedIds.Count -eq 0) {
         }
 
         Write-Host
-        Write-Host "  [A]  Install All Tools (Prerequisites + Toolchains + CLIs)" -ForegroundColor Cyan
-        Write-Host "  [C]  Install All 8 AI Developer CLIs" -ForegroundColor Cyan
+        Write-Host "  [A]  Install All Tools (Prerequisites + Toolchains + Utilities + CLIs)" -ForegroundColor Cyan
+        Write-Host "  [C]  Install All 9 AI Developer CLIs & Agent Runtimes" -ForegroundColor Cyan
         Write-Host "  [L]  List Full Inventory" -ForegroundColor Cyan
         Write-Host "  [H]  View Detailed Help & Flags" -ForegroundColor Cyan
         Write-Host "  [Q]  Quit" -ForegroundColor Red
@@ -406,7 +529,7 @@ if ($SelectedIds.Count -eq 0) {
             break
         }
         elseif ($Choice -ieq 'C') {
-            @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider') | ForEach-Object { $SelectedIds.Add($_) }
+            @('Cline', 'Hermes', 'Vibe', 'Ori', 'Antigravity', 'Copilot', 'Claude', 'Aider', 'Herdr') | ForEach-Object { $SelectedIds.Add($_) }
             break
         }
         elseif ($Choice -ieq 'L') {
